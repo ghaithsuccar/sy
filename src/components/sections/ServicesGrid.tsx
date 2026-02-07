@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Hash, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import type { Language } from "@/lib/use-language";
 import { cn } from "@/lib/utils";
@@ -78,15 +78,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
     headlineGlow,
     (value) => `0 0 ${value * 24}px rgba(255,255,255,0.08)`
   );
-  const floatVariants = useMemo(
-    () => ({
-      float: {
-        y: [0, -14, 0],
-        transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-      },
-    }),
-    []
-  );
+
   useLayoutEffect(() => {
     const measure = () => {
       if (!stickyRef.current || !trackRef.current) return;
@@ -116,28 +108,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
       >
         <div className="relative mx-auto w-full max-w-6xl">
           <div className="relative flex min-h-[45vh] items-center justify-center">
-            <motion.span
-              variants={floatVariants}
-              animate="float"
-              style={{ opacity: headlineOpacity, y: headlineY }}
-              className={cn(
-                "absolute -top-6 left-6 flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-[#0F1F1E] shadow-[0_12px_30px_rgba(0,0,0,0.35)] ring-1 ring-white/10",
-                isRTL && "left-auto right-6"
-              )}
-            >
-              <Zap size={22} />
-            </motion.span>
-            <motion.span
-              variants={floatVariants}
-              animate="float"
-              style={{ opacity: headlineOpacity, y: headlineY }}
-              className={cn(
-                "absolute -bottom-8 right-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-[#0F1F1E] shadow-[0_12px_30px_rgba(0,0,0,0.35)] ring-1 ring-white/10",
-                isRTL && "right-auto left-10"
-              )}
-            >
-              <Hash size={22} />
-            </motion.span>
+
 
             <motion.div
               style={{
