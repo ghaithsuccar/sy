@@ -69,3 +69,11 @@ powershell
 git pull
 This will download only the new changes (like the docs folder we just created) and merge them into your local files.
 
+## E2E Testing
+
+Run Playwright e2e tests locally:
+
+```bash
+npm run test:e2e
+```
+
