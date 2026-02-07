@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import { Cairo, Inter } from "next/font/google";
+import { Cairo, Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,9 +21,10 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: "Ouj Marketing",
-  description: "Premium Syrian digital agency specializing in AI & marketing.",
+  title: "Ouj | Digital Infrastructure Partner",
+  description: "Building digital infrastructure for business growth in Syria — using AI, automation and modern systems.",
 };
+
 
 export default function RootLayout({
   children,
@@ -26,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${cairo.variable} antialiased`}>
+      <body className={`${jakarta.variable} ${inter.variable} ${cairo.variable} antialiased`}>
         {children}
       </body>
     </html>

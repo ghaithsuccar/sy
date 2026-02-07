@@ -1,17 +1,157 @@
-# Style Guide
+Your Brand Style Direction
+Core design style
+Modern × Human-Tech × Infrastructure-oriented
+Not:
+flashy startup
+neon tech
+corporate blue consulting
+You are:
+👉 a digital infrastructure partner for the Syrian market.
+Think:
+systems, gateways, bridges, flows, structure.
 
-## UI/UX Principles
-- **Aesthetic**: Premium, luxurious, modern (Light Luxury pivot).
-- **Whitespace**: Ample whitespace to evoke architectural magazine quality.
-- **Accents**: Gold/Metallic accents (`#D4AF37`) against clean backgrounds.
+Design personality
+Clear
+Structured
+Calm
+Confident
+Future-ready
+Not aggressive
+Not playful
 
-## Coding Standards
-- **Framework**: Next.js (App Router).
-- **Styling**: Tailwind CSS / Vanilla CSS.
-- **Components**: Shadcn/UI (Radix UI) for accessible components.
-- **Animations**: Framer Motion for subtle micro-interactions.
+Visual style type
+✅ Modern
+✅ Tech-driven
+✅ Minimal
+✅ Editorial layout
+✅ Grid-based
+Avoid:
+❌ futuristic sci-fi
+❌ cyber / hacker visuals
+❌ marketing hype layouts
 
-## Color Palette
-- Primary: White / Off-white (Backgrounds)
-- Text: Dark/Black (High contrast)
-- Accent: Gold (`#D4AF37`)
+Color strategy (important)
+You must avoid:
+blue
+purple
+neon green
+gradients-on-everything
+They are overused by agencies.
+
+Recommended main palette (not overused)
+Primary color
+Deep Charcoal Blue-Green
+Hex:
+#0F1F1E
+Why:
+feels technological
+feels stable
+works well in Middle East branding
+not a startup cliché
+
+Secondary accent
+Warm sand / light desert tone
+Hex:
+#E6D8B8
+Why:
+subtle regional reference
+humanizes the brand
+separates you from pure tech brands
+
+Signal accent (very limited use)
+Soft AI mint
+Hex:
+#4ED1B2
+Use only for:
+CTAs
+icons
+key highlights
+
+Backgrounds
+White and near-white only:
+#FFFFFF
+#F6F7F7
+
+Typography direction
+Use:
+Primary font style
+Humanist sans / modern grotesk
+Look for:
+Inter
+Manrope
+Plus Jakarta Sans
+Avoid:
+futuristic fonts
+rounded playful fonts
+geometric heavy fonts (like Poppins as main)
+
+Logo style (you already started correctly)
+Your logo must always be:
+flat
+monochrome first
+scalable
+geometry-based
+no effects
+You already picked the right direction (gateway / road / portal).
+That fits your positioning perfectly.
+
+Layout & UI style
+Always:
+strong margins
+wide white space
+left aligned content
+grid layouts
+large section spacing
+No:
+centered marketing hero blocks
+cluttered cards
+heavy shadows
+
+Graphic language
+Use abstract shapes based on:
+frames
+portals
+pathways
+nodes
+directional lines
+Not:
+stock people images
+fake business meetings
+smiling teams
+
+Illustration & imagery rule
+If you use imagery:
+Use:
+abstract tech illustrations
+system diagrams
+simplified scenes
+Avoid:
+Western startup clichés
+stock laptops & coffee shots
+
+Brand tone (very important for your market)
+Your tone should be:
+practical
+simple language
+solution-oriented
+non-technical for clients
+technical internally
+
+Positioning sentence style (for all pages)
+You should always sound like:
+We build digital infrastructure for business growth in Syria — using AI, automation and modern systems.
+Not:
+We help brands shine and grow digitally.
+
+Summary — your branding approach
+Infrastructure-first digital agency
+Not a creative studio.
+Not a marketing shop.
+You are a:
+👉 digital operating layer for businesses.
+
+Very short brand DNA
+Style: modern, calm, structured
+Colors: dark tech base + warm regional neutral + light AI accent
+Visuals: gateways, systems, flows
+Tone: professional, accessible, trustworthy

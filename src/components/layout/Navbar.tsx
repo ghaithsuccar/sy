@@ -42,37 +42,37 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
   );
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-white/5 backdrop-blur-md">
-      <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="#top" className="flex items-center gap-2 text-lg font-semibold text-white">
-          <span className="tracking-wide">Ouj</span>
-          <span className="text-[#D4AF37]">|</span>
-          <span className="font-semibold">أوج</span>
+    <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-white/80 backdrop-blur-md">
+      <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-5">
+        <Link href="#top" className="flex items-center gap-2 text-xl font-bold tracking-tight text-[#0F1F1E]">
+          <span>OUJ</span>
+          <span className="h-6 w-[2px] bg-[#4ED1B2]"></span>
+          <span className="font-bold">أوج</span>
         </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-10 md:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-white/70 transition-colors hover:text-white"
+              className="text-sm font-semibold text-[#0F1F1E]/70 transition-colors hover:text-[#0F1F1E]"
             >
               {item.label[language]}
             </Link>
           ))}
         </div>
 
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden items-center gap-6 md:flex">
           <button
             type="button"
             onClick={onToggleLanguage}
-            className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white/80 transition-colors hover:border-[#D4AF37] hover:text-white"
+            className="text-xs font-bold uppercase tracking-widest text-[#0F1F1E]/60 transition-colors hover:text-[#0F1F1E]"
           >
             {labels.language}
           </button>
           <Link
             href="#contact"
-            className="rounded-full bg-[#D4AF37] px-5 py-2 text-xs font-semibold uppercase tracking-widest text-black transition-transform hover:scale-[1.02]"
+            className="border-2 border-[#0F1F1E] bg-[#0F1F1E] px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-transparent hover:text-[#0F1F1E]"
           >
             {labels.contact}
           </Link>
@@ -82,9 +82,9 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
           type="button"
           onClick={() => setIsOpen(true)}
           aria-label={labels.menu}
-          className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/10 p-2 text-white/80 transition-colors hover:text-white md:hidden"
+          className="inline-flex items-center justify-center p-2 text-[#0F1F1E] md:hidden"
         >
-          <Menu size={20} />
+          <Menu size={24} />
         </button>
       </nav>
 
@@ -98,62 +98,62 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
           >
             <button
               type="button"
-              className="absolute inset-0 h-full w-full bg-black/60"
+              className="absolute inset-0 h-full w-full bg-[#0F1F1E]/40 backdrop-blur-sm"
               onClick={() => setIsOpen(false)}
               aria-label="Close"
             />
             <motion.aside
-              initial={{ x: isRTL ? -320 : 320, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: isRTL ? -320 : 320, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 260, damping: 30 }}
+              initial={{ x: isRTL ? -320 : 320 }}
+              animate={{ x: 0 }}
+              exit={{ x: isRTL ? -320 : 320 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className={cn(
-                "absolute top-0 h-full w-72 bg-[#0A0A0A] px-6 py-6 shadow-2xl",
+                "absolute top-0 h-full w-80 bg-white p-8 shadow-2xl",
                 isRTL ? "left-0" : "right-0"
               )}
             >
               <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold uppercase tracking-widest text-white/60">
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0F1F1E]/40">
                   {labels.menu}
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="rounded-full border border-white/10 p-2 text-white/80"
+                  className="p-2 text-[#0F1F1E]"
                   aria-label="Close menu"
                 >
-                  <X size={18} />
+                  <X size={24} />
                 </button>
               </div>
 
-              <div className="mt-8 flex flex-col gap-4">
+              <div className="mt-12 flex flex-col gap-6">
                 {navItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="text-base font-semibold text-white"
+                    className="text-xl font-bold tracking-tight text-[#0F1F1E]"
                   >
                     {item.label[language]}
                   </Link>
                 ))}
               </div>
 
-              <div className="mt-8 flex flex-col gap-3">
+              <div className="mt-12 flex flex-col gap-4">
                 <button
                   type="button"
                   onClick={() => {
                     onToggleLanguage();
                     setIsOpen(false);
                   }}
-                  className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white/80"
+                  className="border border-[#0F1F1E]/10 py-4 text-sm font-bold uppercase tracking-widest text-[#0F1F1E]"
                 >
                   {labels.language}
                 </button>
                 <Link
                   href="#contact"
                   onClick={() => setIsOpen(false)}
-                  className="rounded-full bg-[#D4AF37] px-5 py-2 text-center text-xs font-semibold uppercase tracking-widest text-black"
+                  className="bg-[#0F1F1E] py-4 text-center text-sm font-bold uppercase tracking-widest text-white"
                 >
                   {labels.contact}
                 </Link>
@@ -165,3 +165,4 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
     </header>
   );
 }
+
