@@ -13,9 +13,9 @@ import {
     Mail,
     Search,
     Globe,
-    Cloud,
-    Code,
-    Database
+    Palette,
+    PenTool,
+    Target
 } from "lucide-react";
 
 const icons = [
@@ -23,16 +23,16 @@ const icons = [
     { Icon: Linkedin, color: "#0077B5", label: "LinkedIn" },
     { Icon: Facebook, color: "#1877F2", label: "Facebook" },
     { Icon: Megaphone, color: "#F4B400", label: "Ads" },
-    { Icon: MapPin, color: "#34A853", label: "Maps" },
+    { Icon: MapPin, color: "#34A853", label: "Local" },
     { Icon: Youtube, color: "#FF0000", label: "YouTube" },
     { Icon: BarChart3, color: "#4285F4", label: "Analytics" },
-    { Icon: Calendar, color: "#EA4335", label: "Calendar" },
-    { Icon: Mail, color: "#EA4335", label: "Gmail" },
-    { Icon: Search, color: "#4285F4", label: "Search" },
+    { Icon: Calendar, color: "#EA4335", label: "Strategy" },
+    { Icon: Mail, color: "#EA4335", label: "Email" },
+    { Icon: Search, color: "#4285F4", label: "SEO" },
     { Icon: Globe, color: "#34A853", label: "Web" },
-    { Icon: Cloud, color: "#1A73E8", label: "Cloud" },
-    { Icon: Code, color: "#5F6368", label: "Dev" },
-    { Icon: Database, color: "#FF6D01", label: "Data" },
+    { Icon: Palette, color: "#9C27B0", label: "Branding" },
+    { Icon: PenTool, color: "#5F6368", label: "Content" },
+    { Icon: Target, color: "#FF6D01", label: "Conversion" },
 ];
 
 export function FloatingIconsStrip() {
