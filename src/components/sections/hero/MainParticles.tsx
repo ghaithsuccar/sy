@@ -16,6 +16,7 @@ export function MainParticles() {
     const COUNT = 2400;
 
     const pointsRef = useRef<THREE.Points>(null);
+    const velocitiesRef = useRef<Float32Array>(new Float32Array(COUNT * 3));
 
     const raycasterRef = useRef(new THREE.Raycaster());
     const planeRef = useRef(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0)); // z=0 plane
@@ -29,10 +30,15 @@ export function MainParticles() {
 
     const { camera } = useThree();
 
-    const { positions, origins, velocities, colors } = useMemo(() => {
+    // Deterministic pseudo-random so particle generation stays pure/idempotent.
+    const rand01 = (index: number, seed: number) => {
+        const x = Math.sin(index * 12.9898 + seed * 78.233) * 43758.5453;
+        return x - Math.floor(x);
+    };
+
+    const { positions, origins, colors } = useMemo(() => {
         const positions = new Float32Array(COUNT * 3);
         const origins = new Float32Array(COUNT * 3);
-        const velocities = new Float32Array(COUNT * 3);
         const colors = new Float32Array(COUNT * 3);
 
         // Build a burst around (0,0) first — we’ll offset it each frame by the moving center
@@ -43,19 +49,24 @@ export function MainParticles() {
 
         for (let i = 0; i < COUNT; i++) {
             const i3 = i * 3;
+            const r1 = rand01(i, 1);
+            const r2 = rand01(i, 2);
+            const r3 = rand01(i, 3);
+            const r4 = rand01(i, 4);
+            const r5 = rand01(i, 5);
 
             // Fan burst: -105..105 degrees
             const a = THREE.MathUtils.degToRad(
-                THREE.MathUtils.lerp(-105, 105, Math.random())
+                THREE.MathUtils.lerp(-105, 105, r1)
             );
 
             // Dense near center, sparser outward
-            const r = minR + (Math.random() ** 0.6) * (maxR - minR);
+            const r = minR + (r2 ** 0.6) * (maxR - minR);
 
             // Initial around (0,0)
-            const x = Math.cos(a) * r + (Math.random() - 0.5) * 0.25;
-            const y = Math.sin(a) * r + (Math.random() - 0.5) * 0.25;
-            const z = (Math.random() - 0.5) * 0.6;
+            const x = Math.cos(a) * r + (r3 - 0.5) * 0.25;
+            const y = Math.sin(a) * r + (r4 - 0.5) * 0.25;
+            const z = (r5 - 0.5) * 0.6;
 
             positions[i3] = x;
             positions[i3 + 1] = y;
@@ -64,10 +75,6 @@ export function MainParticles() {
             origins[i3] = x;
             origins[i3 + 1] = y;
             origins[i3 + 2] = z;
-
-            velocities[i3] = 0;
-            velocities[i3 + 1] = 0;
-            velocities[i3 + 2] = 0;
 
             // Angle -> hue gradient (blue/purple -> red/orange/yellow)
             const t = (a + THREE.MathUtils.degToRad(105)) / THREE.MathUtils.degToRad(210);
@@ -81,7 +88,7 @@ export function MainParticles() {
             colors[i3 + 2] = tmpColor.b;
         }
 
-        return { positions, origins, velocities, colors };
+        return { positions, origins, colors };
     }, []);
 
     useFrame((state, delta) => {
@@ -145,6 +152,7 @@ export function MainParticles() {
 
         const posAttr = pts.geometry.attributes.position as THREE.BufferAttribute;
         const pos = posAttr.array as Float32Array;
+        const velocities = velocitiesRef.current;
 
         for (let i = 0; i < COUNT; i++) {
             const i3 = i * 3;
@@ -165,7 +173,7 @@ export function MainParticles() {
             // Return-to-origin (but origin moves with center)
             let ax = (ox - px) * kReturn;
             let ay = (oy - py) * kReturn;
-            let az = (oz - pz) * kZ;
+            const az = (oz - pz) * kZ;
 
             // Local mouse influence (repel + slight swirl)
             const dx = px - mx;

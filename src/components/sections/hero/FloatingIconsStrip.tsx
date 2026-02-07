@@ -42,13 +42,13 @@ export function FloatingIconsStrip() {
                 <motion.div
                     key={i}
                     animate={{
-                        y: [0, -15, 0],
+                        y: [0, -24, 0],
                     }}
                     transition={{
-                        duration: 3,
+                        duration: 1.8,
                         repeat: Infinity,
                         ease: "easeInOut",
-                        delay: i * 0.2, // Faster stagger
+                        delay: i * 0.1, // Faster stagger
                     }}
                     className="group relative flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-[#DADCE0] transition-all duration-300 hover:shadow-lg hover:ring-[#1A73E8]"
                 >

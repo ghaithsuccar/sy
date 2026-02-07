@@ -2,6 +2,8 @@
 
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/Hero";
+import ServicesGrid from "@/components/sections/ServicesGrid";
+import AboutUs from "@/components/sections/AboutUs";
 import { useLanguage } from "@/lib/use-language";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +24,8 @@ export default function Home() {
       <Navbar language={language} onToggleLanguage={toggleLanguage} />
       <main>
         <Hero language={language} />
+        <ServicesGrid language={language} />
+        <AboutUs language={language} />
       </main>
     </div>
   );

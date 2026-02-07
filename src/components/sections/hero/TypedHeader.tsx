@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import type { Language } from "@/lib/use-language";
 
 type TypedHeaderProps = {
@@ -18,7 +17,7 @@ export function TypedHeader({ text, language }: TypedHeaderProps) {
     // Container variants for staggering
     const containerAndCursor = {
         hidden: { opacity: 0 },
-        visible: (i = 1) => ({
+        visible: () => ({
             opacity: 1,
             transition: { staggerChildren: 0.03, delayChildren: 0.2 },
         }),
