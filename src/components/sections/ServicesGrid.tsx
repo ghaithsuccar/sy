@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
@@ -13,36 +13,36 @@ import { cn } from "@/lib/utils";
 const services = [
   {
     key: "web",
-    category: { en: "Web Dev", ar: "ØªØ·ÙˆÙŠØ± ÙˆÙŠØ¨" },
-    title: { en: "Web Dev & Hosting", ar: "ØªØ·ÙˆÙŠØ± ÙˆØ§Ø³ØªØ¶Ø§ÙØ© Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹" },
+    category: { en: "Web Dev", ar: "تطوير ويب" },
+    title: { en: "Web Dev & Hosting", ar: "تطوير واستضافة المواقع" },
     image:
       "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "branding",
-    category: { en: "Branding", ar: "Ø§Ù„Ù‡ÙˆÙŠØ©" },
-    title: { en: "Branding Systems", ar: "Ø£Ù†Ø¸Ù…Ø© Ø§Ù„Ø¹Ù„Ø§Ù…Ø© Ø§Ù„ØªØ¬Ø§Ø±ÙŠØ©" },
+    category: { en: "Branding", ar: "الهوية" },
+    title: { en: "Branding Systems", ar: "أنظمة العلامة التجارية" },
     image:
       "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "automation",
-    category: { en: "AI Automation", ar: "Ø£ØªÙ…ØªØ© Ø°ÙƒÙŠØ©" },
-    title: { en: "AI Automation", ar: "Ø§Ù„Ø£ØªÙ…ØªØ© Ø¨Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ" },
+    category: { en: "AI Automation", ar: "أتمتة ذكية" },
+    title: { en: "AI Automation", ar: "الأتمتة بالذكاء الاصطناعي" },
     image:
       "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "seo",
-    category: { en: "SEO / GMR", ar: "Ø³ÙŠÙˆ / Ø®Ø±Ø§Ø¦Ø·" },
-    title: { en: "SEO & GMR", ar: "ØªØ­Ø³ÙŠÙ† Ø§Ù„Ø¸Ù‡ÙˆØ± ÙˆØ§Ù„Ø®Ø±Ø§Ø¦Ø·" },
+    category: { en: "SEO / GMR", ar: "سيو / خرائط" },
+    title: { en: "SEO & GMR", ar: "تحسين الظهور والخرائط" },
     image:
       "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "reputation",
-    category: { en: "Reputation", ar: "Ø§Ù„Ø³Ù…Ø¹Ø©" },
-    title: { en: "Reputation Mgmt", ar: "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø³Ù…Ø¹Ø©" },
+    category: { en: "Reputation", ar: "السمعة" },
+    title: { en: "Reputation Mgmt", ar: "إدارة السمعة" },
     image:
       "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80",
   },
@@ -111,8 +111,6 @@ export default function ServicesGrid({ language }: { language: Language }) {
       >
         <div className="relative mx-auto w-full max-w-6xl">
           <div className="relative flex min-h-[45vh] items-center justify-center">
-
-
             <motion.div
               style={{
                 scale: headlineScale,
@@ -121,17 +119,22 @@ export default function ServicesGrid({ language }: { language: Language }) {
               }}
               className={cn("text-center", isRTL && "text-right")}
             >
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/40">
-                {isRTL ? "Ø®Ø¯Ù…Ø§ØªÙ†Ø§" : "Our Services"}
+              <p
+                className={cn(
+                  "text-xs font-semibold text-white/40",
+                  isRTL ? "arabic-text" : "uppercase tracking-[0.35em]"
+                )}
+              >
+                {isRTL ? "خدماتنا" : "Our Services"}
               </p>
               <h2
                 className={cn(
                   "mt-4 text-4xl font-semibold tracking-tight text-white/70 sm:text-5xl lg:text-6xl",
-                  isRTL ? "font-cairo" : "font-[var(--font-jakarta)]"
+                  isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
                 )}
                 style={{ textShadow: headlineTextShadow }}
               >
-                {isRTL ? "Ù†Ø¬Ø¹Ù„ Ø¹Ù„Ø§Ù…ØªÙƒ Ø§Ù„ØªØ¬Ø§Ø±ÙŠØ© Ù„Ø§ ØªÙÙ†Ø³Ù‰" : "WE MAKE BRANDS UNSKIPPABLE"}
+                {isRTL ? "نجعل علامتك التجارية لا تُنسى" : "WE MAKE BRANDS UNSKIPPABLE"}
               </h2>
             </motion.div>
           </div>
@@ -156,8 +159,8 @@ export default function ServicesGrid({ language }: { language: Language }) {
                   <Badge
                     variant="secondary"
                     className={cn(
-                      "absolute top-5 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-[#0F1F1E]",
-                      isRTL ? "right-5" : "left-5"
+                      "absolute top-5 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold text-[#0F1F1E]",
+                      isRTL ? "right-5 arabic-text" : "left-5 uppercase tracking-[0.3em]"
                     )}
                   >
                     {service.category[language]}
@@ -171,7 +174,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
                     <p
                       className={cn(
                         "text-lg font-semibold",
-                        isRTL ? "font-cairo" : "font-[var(--font-jakarta)]"
+                        isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
                       )}
                     >
                       {service.title[language]}
@@ -184,10 +187,13 @@ export default function ServicesGrid({ language }: { language: Language }) {
             <Button
               type="button"
               variant="secondary"
-              className="group h-auto rounded-full border border-white/20 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#0F1F1E] transition-all duration-300 hover:-translate-y-2 hover:bg-white/90 hover:text-[#0F1F1E]"
+              className={cn(
+                "group h-auto rounded-full border border-white/20 bg-white px-6 py-3 text-xs font-semibold text-[#0F1F1E] transition-all duration-300 hover:-translate-y-2 hover:bg-white/90 hover:text-[#0F1F1E]",
+                isRTL ? "arabic-text" : "uppercase tracking-[0.3em]"
+              )}
             >
               <span className="inline-flex items-center gap-3">
-                {isRTL ? "Ø¹Ø±Ø¶ Ø§Ù„ÙƒÙ„" : "View All"}
+                {isRTL ? "عرض الكل" : "View All"}
                 <ArrowRight className={cn("h-4 w-4", isRTL && "rotate-180")} />
               </span>
             </Button>

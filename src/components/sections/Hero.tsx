@@ -56,7 +56,10 @@ export default function Hero({ language }: HeroProps) {
           >
             <Badge
               variant="secondary"
-              className="rounded-full bg-white px-5 py-2 text-xs font-semibold uppercase tracking-widest text-[#5F6368] shadow-sm ring-1 ring-[#E2E8F0]"
+              className={cn(
+                "rounded-full bg-white px-5 py-2 text-xs font-semibold text-[#5F6368] shadow-sm ring-1 ring-[#E2E8F0]",
+                isRTL ? "arabic-text" : "uppercase tracking-widest"
+              )}
             >
               {language === "ar" ? "\u0627\u0648\u062c | \u0648\u0643\u0627\u0644\u0629 \u062a\u0633\u0648\u064a\u0642 \u0633\u0648\u0631\u064a\u0629" : "Ouj | Syrian Marketing Agency"}
             </Badge>

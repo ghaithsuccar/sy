@@ -25,15 +25,15 @@ import type { Language } from "@/lib/use-language";
 const navItems = [
   {
     href: "#services",
-    label: { en: "Services", ar: "Ø§Ù„Ø®Ø¯Ù…Ø§Øª" },
+    label: { en: "Services", ar: "الخدمات" },
   },
   {
     href: "#case-studies",
-    label: { en: "Case Studies", ar: "Ø¯Ø±Ø§Ø³Ø§Øª Ø§Ù„Ø­Ø§Ù„Ø©" },
+    label: { en: "Case Studies", ar: "دراسات الحالة" },
   },
   {
     href: "#about",
-    label: { en: "About", ar: "Ù…Ù† Ù†Ø­Ù†" },
+    label: { en: "About", ar: "من نحن" },
   },
 ];
 
@@ -47,9 +47,9 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
 
   const labels = useMemo(
     () => ({
-      contact: language === "ar" ? "ØªÙˆØ§ØµÙ„ Ù…Ø¹Ù†Ø§" : "Contact Us",
+      contact: language === "ar" ? "تواصل معنا" : "Contact Us",
       language: language === "ar" ? "EN" : "AR",
-      menu: language === "ar" ? "Ø§Ù„Ù‚Ø§Ø¦Ù…Ø©" : "Menu",
+      menu: language === "ar" ? "القائمة" : "Menu",
     }),
     [language]
   );
@@ -60,7 +60,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
         <Link href="#top" className="flex items-center gap-2 text-xl font-bold tracking-tight text-[#0F1F1E]">
           <span>OUJ</span>
           <span className="h-6 w-[2px] bg-[#4ED1B2]"></span>
-          <span className="font-bold">Ø£ÙˆØ¬</span>
+          <span className={cn("font-bold", isRTL && "arabic-text")}>أوج</span>
         </Link>
 
         <NavigationMenu viewport={false} className="hidden md:flex">
@@ -71,7 +71,12 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                   asChild
                   className="bg-transparent p-0 text-sm font-semibold text-[#0F1F1E]/70 shadow-none hover:bg-transparent hover:text-[#0F1F1E] focus:bg-transparent"
                 >
-                  <Link href={item.href}>{item.label[language]}</Link>
+                  <Link
+                    href={item.href}
+                    className={cn(isRTL && "arabic-text")}
+                  >
+                    {item.label[language]}
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             ))}
@@ -84,14 +89,20 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
             variant="ghost"
             size="sm"
             onClick={onToggleLanguage}
-            className="h-auto text-xs font-bold uppercase tracking-widest text-[#0F1F1E]/60 transition-colors hover:bg-transparent hover:text-[#0F1F1E]"
+            className={cn(
+              "h-auto text-xs font-bold text-[#0F1F1E]/60 transition-colors hover:bg-transparent hover:text-[#0F1F1E]",
+              isRTL ? "arabic-text" : "uppercase tracking-widest"
+            )}
           >
             {labels.language}
           </Button>
           <Button
             asChild
             size="sm"
-            className="h-auto rounded-full border-2 border-[#0F1F1E] bg-[#0F1F1E] px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-transparent hover:text-[#0F1F1E]"
+            className={cn(
+              "h-auto rounded-full border-2 border-[#0F1F1E] bg-[#0F1F1E] px-6 py-2.5 text-xs font-bold text-white transition-all hover:bg-transparent hover:text-[#0F1F1E]",
+              isRTL ? "arabic-text" : "uppercase tracking-widest"
+            )}
           >
             <Link href="#contact">{labels.contact}</Link>
           </Button>
@@ -111,7 +122,12 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
           </SheetTrigger>
           <SheetContent side={isRTL ? "left" : "right"} className={cn("w-80 p-0", isRTL && "text-right")}>
             <SheetHeader className="border-b border-border px-6 py-5">
-              <SheetTitle className="text-xs font-bold uppercase tracking-[0.2em] text-[#0F1F1E]/40">
+              <SheetTitle
+                className={cn(
+                  "text-xs font-bold text-[#0F1F1E]/40",
+                  isRTL ? "arabic-text" : "uppercase tracking-[0.2em]"
+                )}
+              >
                 {labels.menu}
               </SheetTitle>
             </SheetHeader>
@@ -120,7 +136,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                 <SheetClose key={item.href} asChild>
                   <Link
                     href={item.href}
-                    className="text-xl font-bold tracking-tight text-[#0F1F1E]"
+                    className={cn("text-xl font-bold tracking-tight text-[#0F1F1E]", isRTL && "arabic-text")}
                   >
                     {item.label[language]}
                   </Link>
@@ -133,7 +149,10 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                   type="button"
                   variant="outline"
                   onClick={onToggleLanguage}
-                  className="h-auto border-[#0F1F1E]/10 py-4 text-sm font-bold uppercase tracking-widest text-[#0F1F1E]"
+                  className={cn(
+                    "h-auto border-[#0F1F1E]/10 py-4 text-sm font-bold text-[#0F1F1E]",
+                    isRTL ? "arabic-text" : "uppercase tracking-widest"
+                  )}
                 >
                   {labels.language}
                 </Button>
@@ -141,7 +160,10 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
               <SheetClose asChild>
                 <Button
                   asChild
-                  className="h-auto bg-[#0F1F1E] py-4 text-sm font-bold uppercase tracking-widest text-white"
+                  className={cn(
+                    "h-auto bg-[#0F1F1E] py-4 text-sm font-bold text-white",
+                    isRTL ? "arabic-text" : "uppercase tracking-widest"
+                  )}
                 >
                   <Link href="#contact">{labels.contact}</Link>
                 </Button>

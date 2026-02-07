@@ -22,7 +22,7 @@ const cairo = Cairo({
 
 export const metadata: Metadata = {
   title: "Ouj | Digital Infrastructure Partner",
-  description: "Building digital infrastructure for business growth in Syria — using AI, automation and modern systems.",
+  description: "Building digital infrastructure for business growth in Syria - using AI, automation and modern systems.",
 };
 
 

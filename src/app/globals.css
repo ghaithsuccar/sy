@@ -55,6 +55,12 @@
     font-family: var(--font-cairo), system-ui, -apple-system, sans-serif;
   }
 
+  .arabic-text {
+    font-family: var(--font-cairo), system-ui, -apple-system, sans-serif;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
   .landing-main-header {
     font-family: 'Google Sans Flex', var(--font-jakarta), sans-serif;
     font-variation-settings: 'wght' 500, 'wdth' 100, 'opsz' 48;

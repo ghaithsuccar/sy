@@ -31,7 +31,7 @@ export default function AboutUs({ language }: { language: Language }) {
         <h2
           className={cn(
             "text-6xl font-black italic tracking-tight sm:text-7xl lg:text-8xl",
-            isRTL ? "font-cairo" : "font-[var(--font-jakarta)]"
+            isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
           )}
         >
           {isRTL ? "من نحن" : "ABOUT US"}
