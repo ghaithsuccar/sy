@@ -59,3 +59,13 @@ If you want to see exactly which files are about to be updated before you run th
 powershell
 git status
 This will show you the new docs/ directory and any other files that have been modified.
+
+
+
+2. If you already have the project on that device (Daily Sync)
+If you already have the folder on your second device but want to get the latest changes you just pushed from your current device, you use the "pull" command:
+
+powershell
+git pull
+This will download only the new changes (like the docs folder we just created) and merge them into your local files.
+
