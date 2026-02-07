@@ -4,42 +4,45 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import type { Language } from "@/lib/use-language";
 import { cn } from "@/lib/utils";
 
 const services = [
   {
     key: "web",
-    category: { en: "Web Dev", ar: "تطوير ويب" },
-    title: { en: "Web Dev & Hosting", ar: "تطوير واستضافة المواقع" },
+    category: { en: "Web Dev", ar: "ØªØ·ÙˆÙŠØ± ÙˆÙŠØ¨" },
+    title: { en: "Web Dev & Hosting", ar: "ØªØ·ÙˆÙŠØ± ÙˆØ§Ø³ØªØ¶Ø§ÙØ© Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹" },
     image:
       "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "branding",
-    category: { en: "Branding", ar: "الهوية" },
-    title: { en: "Branding Systems", ar: "أنظمة العلامة التجارية" },
+    category: { en: "Branding", ar: "Ø§Ù„Ù‡ÙˆÙŠØ©" },
+    title: { en: "Branding Systems", ar: "Ø£Ù†Ø¸Ù…Ø© Ø§Ù„Ø¹Ù„Ø§Ù…Ø© Ø§Ù„ØªØ¬Ø§Ø±ÙŠØ©" },
     image:
       "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "automation",
-    category: { en: "AI Automation", ar: "أتمتة ذكية" },
-    title: { en: "AI Automation", ar: "الأتمتة بالذكاء الاصطناعي" },
+    category: { en: "AI Automation", ar: "Ø£ØªÙ…ØªØ© Ø°ÙƒÙŠØ©" },
+    title: { en: "AI Automation", ar: "Ø§Ù„Ø£ØªÙ…ØªØ© Ø¨Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ" },
     image:
       "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "seo",
-    category: { en: "SEO / GMR", ar: "سيو / خرائط" },
-    title: { en: "SEO & GMR", ar: "تحسين الظهور والخرائط" },
+    category: { en: "SEO / GMR", ar: "Ø³ÙŠÙˆ / Ø®Ø±Ø§Ø¦Ø·" },
+    title: { en: "SEO & GMR", ar: "ØªØ­Ø³ÙŠÙ† Ø§Ù„Ø¸Ù‡ÙˆØ± ÙˆØ§Ù„Ø®Ø±Ø§Ø¦Ø·" },
     image:
       "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "reputation",
-    category: { en: "Reputation", ar: "السمعة" },
-    title: { en: "Reputation Mgmt", ar: "إدارة السمعة" },
+    category: { en: "Reputation", ar: "Ø§Ù„Ø³Ù…Ø¹Ø©" },
+    title: { en: "Reputation Mgmt", ar: "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø³Ù…Ø¹Ø©" },
     image:
       "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80",
   },
@@ -119,7 +122,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
               className={cn("text-center", isRTL && "text-right")}
             >
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/40">
-                {isRTL ? "خدماتنا" : "Our Services"}
+                {isRTL ? "Ø®Ø¯Ù…Ø§ØªÙ†Ø§" : "Our Services"}
               </p>
               <h2
                 className={cn(
@@ -128,7 +131,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
                 )}
                 style={{ textShadow: headlineTextShadow }}
               >
-                {isRTL ? "نجعل علامتك التجارية لا تُنسى" : "WE MAKE BRANDS UNSKIPPABLE"}
+                {isRTL ? "Ù†Ø¬Ø¹Ù„ Ø¹Ù„Ø§Ù…ØªÙƒ Ø§Ù„ØªØ¬Ø§Ø±ÙŠØ© Ù„Ø§ ØªÙÙ†Ø³Ù‰" : "WE MAKE BRANDS UNSKIPPABLE"}
               </h2>
             </motion.div>
           </div>
@@ -142,38 +145,52 @@ export default function ServicesGrid({ language }: { language: Language }) {
               <motion.div
                 key={service.key}
                 whileHover={{ y: -20, scale: 1.02 }}
-                className="group relative w-[280px] aspect-[9/16] overflow-hidden rounded-[40px] shadow-[0_22px_55px_rgba(15,31,30,0.2)] sm:w-[300px] lg:w-[320px]"
+                className="group"
               >
-                <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                  style={{ backgroundImage: `url(${service.image})` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                <div className="absolute top-5 left-5 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-[#0F1F1E]">
-                  {service.category[language]}
-                </div>
-                <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/25 bg-white/15 p-4 text-white backdrop-blur-md">
-                  <p
+                <Card className="relative w-[280px] aspect-[9/16] overflow-hidden rounded-[40px] border-0 bg-transparent p-0 text-white shadow-[0_22px_55px_rgba(15,31,30,0.2)] sm:w-[300px] lg:w-[320px]">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                    style={{ backgroundImage: `url(${service.image})` }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  <Badge
+                    variant="secondary"
                     className={cn(
-                      "text-lg font-semibold",
-                      isRTL ? "font-cairo text-right" : "font-[var(--font-jakarta)]"
+                      "absolute top-5 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-[#0F1F1E]",
+                      isRTL ? "right-5" : "left-5"
                     )}
                   >
-                    {service.title[language]}
-                  </p>
-                </div>
+                    {service.category[language]}
+                  </Badge>
+                  <CardContent
+                    className={cn(
+                      "absolute bottom-5 left-5 right-5 rounded-2xl border border-white/25 bg-white/15 p-4 text-white backdrop-blur-md",
+                      isRTL && "text-right"
+                    )}
+                  >
+                    <p
+                      className={cn(
+                        "text-lg font-semibold",
+                        isRTL ? "font-cairo" : "font-[var(--font-jakarta)]"
+                      )}
+                    >
+                      {service.title[language]}
+                    </p>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
 
-            <button
+            <Button
               type="button"
-              className="group flex items-center justify-center rounded-full border border-white/20 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#0F1F1E] transition-all duration-300 hover:-translate-y-2 hover:bg-white/90 hover:text-[#0F1F1E]"
+              variant="secondary"
+              className="group h-auto rounded-full border border-white/20 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#0F1F1E] transition-all duration-300 hover:-translate-y-2 hover:bg-white/90 hover:text-[#0F1F1E]"
             >
               <span className="inline-flex items-center gap-3">
-                {isRTL ? "عرض الكل" : "View All"}
+                {isRTL ? "Ø¹Ø±Ø¶ Ø§Ù„ÙƒÙ„" : "View All"}
                 <ArrowRight className={cn("h-4 w-4", isRTL && "rotate-180")} />
               </span>
-            </button>
+            </Button>
           </motion.div>
         </div>
       </div>

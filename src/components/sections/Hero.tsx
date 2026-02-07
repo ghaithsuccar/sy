@@ -4,6 +4,8 @@ import { Canvas } from "@react-three/fiber";
 import { motion } from "framer-motion";
 import { Suspense } from "react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import type { Language } from "@/lib/use-language";
 import { cn } from "@/lib/utils";
 import { MainParticles } from "./hero/MainParticles";
@@ -52,9 +54,12 @@ export default function Hero({ language }: HeroProps) {
             transition={{ duration: 0.6 }}
             className="flex justify-center"
           >
-            <span className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-xs font-semibold uppercase tracking-widest text-[#5F6368] shadow-sm ring-1 ring-[#E2E8F0]">
+            <Badge
+              variant="secondary"
+              className="rounded-full bg-white px-5 py-2 text-xs font-semibold uppercase tracking-widest text-[#5F6368] shadow-sm ring-1 ring-[#E2E8F0]"
+            >
               {language === "ar" ? "\u0627\u0648\u062c | \u0648\u0643\u0627\u0644\u0629 \u062a\u0633\u0648\u064a\u0642 \u0633\u0648\u0631\u064a\u0629" : "Ouj | Syrian Marketing Agency"}
-            </span>
+            </Badge>
           </motion.div>
 
           {/* Typed Header Component */}
@@ -77,25 +82,28 @@ export default function Hero({ language }: HeroProps) {
             transition={{ delay: 1, duration: 0.6 }}
             className="flex flex-wrap items-center justify-center gap-4 pt-4"
           >
-            <a
-              href="#contact"
-              className="group inline-flex items-center gap-2 rounded-full bg-[#202124] px-8 py-4 text-[15px] font-medium text-white shadow-lg transition-all hover:bg-[#000000] hover:shadow-xl hover:-translate-y-0.5"
+            <Button
+              asChild
+              className="group h-auto rounded-full bg-[#202124] px-8 py-4 text-[15px] font-medium text-white shadow-lg transition-all hover:bg-[#000000] hover:shadow-xl hover:-translate-y-0.5"
             >
-              <span>{content.primaryCta}</span>
-              <svg
-                className={cn("h-4 w-4 transition-transform group-hover:translate-x-1", isRTL && "rotate-180 group-hover:-translate-x-1")}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </a>
+              <a href="#contact">
+                <span>{content.primaryCta}</span>
+                <svg
+                  className={cn("h-4 w-4 transition-transform group-hover:translate-x-1", isRTL && "rotate-180 group-hover:-translate-x-1")}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </Button>
 
-            <a
-              href="#services"
-              className="inline-flex items-center gap-2 rounded-full px-8 py-4 text-[15px] font-medium text-[#5F6368] transition-colors hover:bg-black/5 hover:text-[#202124]"
+            <Button
+              asChild
+              variant="ghost"
+              className="h-auto rounded-full px-8 py-4 text-[15px] font-medium text-[#5F6368] transition-colors hover:bg-black/5 hover:text-[#202124]"
             >
-              {content.secondaryCta}
-            </a>
+              <a href="#services">{content.secondaryCta}</a>
+            </Button>
           </motion.div>
         </div>
       </div>
