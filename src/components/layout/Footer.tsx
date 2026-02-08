@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import FooterGlobe from "@/components/layout/FooterGlobe";
 import { AntigravityLogo } from "@/components/ui/AntigravityLogo";
 import type { Language } from "@/lib/use-language";
 import { cn } from "@/lib/utils";
@@ -62,11 +63,18 @@ export default function Footer({ language }: FooterProps) {
       <div className="mx-auto max-w-7xl border-t border-black/10 pt-12">
         <div
           className={cn(
-            "grid min-h-[560px] grid-cols-1 gap-12 pb-28 lg:grid-cols-[1.6fr_1fr]",
+            "relative grid min-h-[620px] grid-cols-1 gap-12 pb-28 lg:grid-cols-[1.6fr_1fr]",
             isRTL && "text-right"
           )}
         >
-          <div className="max-w-[560px] space-y-4">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[420px] overflow-hidden">
+            <div className="absolute inset-x-0 bottom-[-140px] h-[560px]">
+              <FooterGlobe />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_52%,_#F6F7F9_88%)]" />
+            </div>
+          </div>
+
+          <div className="relative z-10 max-w-[560px] space-y-4">
             <div className={cn("flex items-center gap-3", isRTL && "flex-row-reverse")}>
               <AntigravityLogo className="size-8" />
               <p className={cn("text-[2.2rem] font-semibold tracking-tight", isRTL && "arabic-text")}>{copy.brand}</p>
@@ -74,7 +82,7 @@ export default function Footer({ language }: FooterProps) {
             <p className={cn("text-[1.08rem] leading-8 text-[#667085]", isRTL && "arabic-text")}>{copy.description}</p>
           </div>
 
-          <div className={cn("grid grid-cols-3 gap-8 sm:gap-10", isRTL && "text-right")}>
+          <div className={cn("relative z-10 grid grid-cols-3 gap-8 sm:gap-10", isRTL && "text-right")}>
             <div className="space-y-2.5">
               <h4 className={cn("text-[2rem] font-semibold", isRTL && "arabic-text")}>{copy.product}</h4>
               <ul className="space-y-1.5 text-[1.15rem] text-[#667085]">
@@ -116,7 +124,7 @@ export default function Footer({ language }: FooterProps) {
           </div>
         </div>
 
-        <div className="pb-6">
+        <div className="relative z-10 pb-6">
           <p className={cn("text-sm text-[#8A93A6]", isRTL && "arabic-text text-right")}>{copy.rights}</p>
         </div>
       </div>
