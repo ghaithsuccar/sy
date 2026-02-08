@@ -3,8 +3,8 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
+import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
-import SiteFooter from "@/components/layout/SiteFooter";
 import Hero from "@/components/sections/Hero";
 import ServicesGrid from "@/components/sections/ServicesGrid";
 import AboutUs from "@/components/sections/AboutUs";
@@ -39,7 +39,7 @@ export default function HomePage({ language }: HomePageProps) {
         <ServicesGrid language={language} />
         <AboutUs language={language} />
       </main>
-      <SiteFooter language={language} />
+      <Footer language={language} />
     </div>
   );
 }
