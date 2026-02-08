@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
 
@@ -34,6 +34,7 @@ type StaggeredMenuProps = {
   footer?: React.ReactNode;
   onMenuOpen?: () => void;
   onMenuClose?: () => void;
+  triggerIconColor?: string;
 };
 
 export default function StaggeredMenu({
@@ -51,9 +52,9 @@ export default function StaggeredMenu({
   footer,
   onMenuOpen,
   onMenuClose,
+  triggerIconColor = "#EF4444",
 }: StaggeredMenuProps) {
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const panelId = useId();
   const panelTitleId = `${panelId}-title`;
@@ -62,10 +63,11 @@ export default function StaggeredMenu({
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   const side = position === "right" ? 1 : -1;
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const canUseDOM = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   useEffect(() => {
     if (open) {
@@ -219,7 +221,7 @@ export default function StaggeredMenu({
         ref={buttonRef}
         type="button"
         data-testid="staggered-menu-trigger"
-        data-mounted={mounted ? "true" : "false"}
+        data-mounted={canUseDOM ? "true" : "false"}
         aria-expanded={open}
         aria-controls={panelId}
         aria-haspopup="dialog"
@@ -247,21 +249,23 @@ export default function StaggeredMenu({
             {closeLabel}
           </motion.span>
         </span>
-        <span className="relative h-4 w-4">
+        <span className="relative h-5 w-5">
           <motion.span
-            className="absolute left-0 right-0 top-1/2 h-[2px] rounded-full bg-current"
-            animate={{ rotate: open ? 45 : 0, y: open ? 0 : -4 }}
+            className="absolute left-1/2 top-1/2 h-4 w-[2px] rounded-full"
+            style={{ backgroundColor: triggerIconColor }}
+            animate={{ rotate: open ? 45 : 24, x: open ? 0 : -3, y: "-50%" }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
           />
           <motion.span
-            className="absolute left-0 right-0 top-1/2 h-[2px] rounded-full bg-current"
-            animate={{ rotate: open ? -45 : 0, y: open ? 0 : 4 }}
+            className="absolute left-1/2 top-1/2 h-4 w-[2px] rounded-full"
+            style={{ backgroundColor: triggerIconColor }}
+            animate={{ rotate: open ? -45 : 24, x: open ? 0 : 3, y: "-50%" }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
           />
         </span>
       </button>
 
-      {mounted &&
+      {canUseDOM &&
         createPortal(
           <AnimatePresence>
             {open && (

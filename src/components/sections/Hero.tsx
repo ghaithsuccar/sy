@@ -33,7 +33,7 @@ export default function Hero({ language }: HeroProps) {
   };
 
   return (
-    <section className="relative flex min-h-[95vh] flex-col overflow-hidden bg-[#FAFAFA] px-6">
+    <section id="hero" className="relative flex min-h-[95vh] flex-col overflow-hidden bg-[#FAFAFA] px-6">
       {/* 1. Three.js Particle Background */}
       <div className="absolute inset-0 z-0">
         <Canvas camera={{ position: [0, 0, 10], fov: 45 }} gl={{ antialias: true, alpha: true }}>

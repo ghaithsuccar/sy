@@ -28,7 +28,7 @@ export default function HomePage({ language }: HomePageProps) {
       lang={language}
       dir={isRTL ? "rtl" : "ltr"}
       className={cn(
-        "min-h-screen bg-[#0A0A0A] text-[#F5F5F5]",
+        "min-h-screen bg-[#FAFAFA] text-[#F5F5F5]",
         language === "ar" ? "font-cairo" : "font-inter"
       )}
     >
