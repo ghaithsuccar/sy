@@ -100,13 +100,17 @@ export default function Hero({ language }: HeroProps) {
               asChild
               variant="brand-outline"
               className={cn(
-                "h-12 min-w-[220px] justify-center",
-                isRTL && "[&_svg]:order-first [&_svg]:ml-0 [&_svg]:mr-4"
+                "group h-12 min-w-[220px] justify-center gap-2.5"
               )}
             >
               <a href="#services">
-                <span>{content.secondaryCta}</span>
-                <span className="inline-flex size-8 items-center justify-center rounded-full border border-[#4ED1B2] bg-[#4ED1B2]/20 transition-colors duration-200 group-hover:border-[#E6D8B8] group-hover:bg-[#E6D8B8]/35">
+                <span className={cn(isRTL && "leading-none")}>{content.secondaryCta}</span>
+                <span
+                  className={cn(
+                    "inline-flex size-8 items-center justify-center rounded-full border border-[#4ED1B2] bg-[#4ED1B2]/20 transition-colors duration-200 group-hover:border-[#E6D8B8] group-hover:bg-[#E6D8B8]/35",
+                    isRTL && "order-last"
+                  )}
+                >
                   <ArrowRight className={cn("size-4 text-[#0F1F1E]", isRTL && "rotate-180")} />
                 </span>
               </a>

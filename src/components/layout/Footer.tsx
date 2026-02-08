@@ -1,9 +1,13 @@
 "use client";
 
+import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 import FooterGlobe from "@/components/layout/FooterGlobe";
 import { AntigravityLogo } from "@/components/ui/AntigravityLogo";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { Language } from "@/lib/use-language";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +43,10 @@ const resourcesLinks: FooterLink[] = [
 export default function Footer({ language }: FooterProps) {
   const isRTL = language === "ar";
   const year = new Date().getFullYear();
+  const fadeUp = {
+    hidden: { opacity: 0, y: 18 },
+    show: { opacity: 1, y: 0 },
+  };
 
   const copy = {
     brand: isRTL ? "\u0645\u0633\u0627\u0631 \u0644\u0644\u062a\u0633\u0648\u064a\u0642" : "MASAR Marketing",
@@ -48,47 +56,71 @@ export default function Footer({ language }: FooterProps) {
     product: isRTL ? "\u0627\u0644\u0645\u0646\u062a\u062c" : "Product",
     company: isRTL ? "\u0627\u0644\u0634\u0631\u0643\u0629" : "Company",
     resources: isRTL ? "\u0627\u0644\u0645\u0648\u0627\u0631\u062f" : "Resources",
+    contactTitle: isRTL ? "\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0646\u0627" : "Quick Contact",
+    contactEmail: isRTL ? "\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a" : "Email",
+    contactMessage: isRTL ? "\u0631\u0633\u0627\u0644\u0629 \u0645\u062e\u062a\u0635\u0631\u0629" : "Short message",
+    contactAction: isRTL ? "\u0625\u0631\u0633\u0627\u0644" : "Send",
+    socialTitle: isRTL ? "\u0627\u0628\u0642 \u0639\u0644\u0649 \u062a\u0648\u0627\u0635\u0644" : "Stay Connected",
+    socialText: isRTL
+      ? "\u062a\u0627\u0628\u0639 MASAR \u0644\u0644\u062a\u062d\u062f\u064a\u062b\u0627\u062a \u0648\u0627\u0644\u0631\u0624\u0649 \u0627\u0644\u062a\u0633\u0648\u064a\u0642\u064a\u0629."
+      : "Follow MASAR for updates and practical digital insights.",
     rights: isRTL
       ? `\u00a9 ${year} MASAR Marketing. \u062c\u0645\u064a\u0639 \u0627\u0644\u062d\u0642\u0648\u0642 \u0645\u062d\u0641\u0648\u0638\u0629.`
       : `\u00a9 ${year} MASAR Marketing. All rights reserved.`,
+    privacy: isRTL ? "\u0633\u064a\u0627\u0633\u0629 \u0627\u0644\u062e\u0635\u0648\u0635\u064a\u0629" : "Privacy Policy",
+    terms: isRTL ? "\u0627\u0644\u0634\u0631\u0648\u0637 \u0648\u0627\u0644\u0623\u062d\u0643\u0627\u0645" : "Terms & Conditions",
   };
+  const socialLinks = [
+    { label: "Instagram", href: "https://instagram.com", icon: Instagram },
+    { label: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
+    { label: "Facebook", href: "https://facebook.com", icon: Facebook },
+    { label: "YouTube", href: "https://youtube.com", icon: Youtube },
+  ];
 
   const mapLabel = (item: FooterLink) => item.label[language];
 
   return (
     <section
+      id="contact"
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative z-20 bg-[#F6F7F9] px-6 pt-5 text-[#0F172A]"
+      className="relative z-20 bg-[#F6F7F9] px-6 pt-5 text-[#0F1F1E]"
     >
       <div className="mx-auto max-w-7xl border-t border-black/10 pt-12">
-        <div
-          className={cn(
-            "relative grid min-h-[620px] grid-cols-1 gap-12 pb-28 lg:grid-cols-[1.6fr_1fr]",
-            isRTL && "text-right"
-          )}
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ staggerChildren: 0.09, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className={cn("relative grid min-h-[470px] grid-cols-1 gap-10 pb-4 lg:grid-cols-[1.6fr_1fr]", isRTL && "text-right")}
         >
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[420px] overflow-hidden">
-            <div className="absolute inset-x-0 bottom-[-140px] h-[560px]">
+          <div className="pointer-events-auto absolute bottom-0 left-1/2 z-20 h-[330px] w-[min(100%,760px)] -translate-x-1/2 overflow-hidden">
+            <div className="absolute inset-x-0 bottom-[-170px] h-[470px]">
               <FooterGlobe />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_52%,_#F6F7F9_88%)]" />
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_66%,_#F6F7F9_96%)]" />
             </div>
           </div>
 
-          <div className="relative z-10 max-w-[560px] space-y-4">
-            <div className={cn("flex items-center gap-3", isRTL && "flex-row-reverse")}>
+          <motion.div variants={fadeUp} className="relative z-10 max-w-[560px] space-y-4 bg-transparent">
+            <div className={cn("flex items-center gap-3 text-[#161611]", isRTL && "flex-row-reverse")}>
               <AntigravityLogo className="size-8" />
-              <p className={cn("text-[2.2rem] font-semibold tracking-tight", isRTL && "arabic-text")}>{copy.brand}</p>
+              <p className={cn("text-[1.8rem] font-semibold tracking-tight", isRTL && "arabic-text")}>{copy.brand}</p>
             </div>
-            <p className={cn("text-[1.08rem] leading-8 text-[#667085]", isRTL && "arabic-text")}>{copy.description}</p>
-          </div>
+            <p className={cn("max-w-[52ch] text-[0.96rem] leading-10 text-[#5D5D54]", isRTL && "arabic-text")}>{copy.description}</p>
+          </motion.div>
 
-          <div className={cn("relative z-10 grid grid-cols-3 gap-8 sm:gap-10", isRTL && "text-right")}>
+          <motion.div variants={fadeUp} className={cn("relative z-10 grid grid-cols-3 gap-8 bg-transparent sm:gap-10", isRTL && "text-right")}>
             <div className="space-y-2.5">
-              <h4 className={cn("text-[2rem] font-semibold", isRTL && "arabic-text")}>{copy.product}</h4>
-              <ul className="space-y-1.5 text-[1.15rem] text-[#667085]">
+              <h4 className={cn("text-[0.96rem] font-medium text-[#161611]", isRTL ? "arabic-text" : "uppercase tracking-[0.04em]")}>{copy.product}</h4>
+              <ul className="space-y-1.5 text-[0.96rem] text-[#5D5D54]">
                 {productLinks.map((item) => (
                   <li key={`${item.href}-${item.label.en}`}>
-                    <Link href={item.href} className={cn("hover:text-[#0F172A]", isRTL && "arabic-text")}>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "inline-flex items-center rounded-sm px-0.5 transition-colors duration-200 hover:text-[#1C1C16]",
+                        isRTL && "arabic-text"
+                      )}
+                    >
                       {mapLabel(item)}
                     </Link>
                   </li>
@@ -97,11 +129,17 @@ export default function Footer({ language }: FooterProps) {
             </div>
 
             <div className="space-y-2.5">
-              <h4 className={cn("text-[2rem] font-semibold", isRTL && "arabic-text")}>{copy.company}</h4>
-              <ul className="space-y-1.5 text-[1.15rem] text-[#667085]">
+              <h4 className={cn("text-[0.96rem] font-medium text-[#161611]", isRTL ? "arabic-text" : "uppercase tracking-[0.04em]")}>{copy.company}</h4>
+              <ul className="space-y-1.5 text-[0.96rem] text-[#5D5D54]">
                 {companyLinks.map((item) => (
                   <li key={`${item.href}-${item.label.en}`}>
-                    <Link href={item.href} className={cn("hover:text-[#0F172A]", isRTL && "arabic-text")}>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "inline-flex items-center rounded-sm px-0.5 transition-colors duration-200 hover:text-[#1C1C16]",
+                        isRTL && "arabic-text"
+                      )}
+                    >
                       {mapLabel(item)}
                     </Link>
                   </li>
@@ -110,23 +148,111 @@ export default function Footer({ language }: FooterProps) {
             </div>
 
             <div className="space-y-2.5">
-              <h4 className={cn("text-[2rem] font-semibold", isRTL && "arabic-text")}>{copy.resources}</h4>
-              <ul className="space-y-1.5 text-[1.15rem] text-[#667085]">
+              <h4 className={cn("text-[0.96rem] font-medium text-[#161611]", isRTL ? "arabic-text" : "uppercase tracking-[0.04em]")}>{copy.resources}</h4>
+              <ul className="space-y-1.5 text-[0.96rem] text-[#5D5D54]">
                 {resourcesLinks.map((item) => (
                   <li key={`${item.href}-${item.label.en}`}>
-                    <Link href={item.href} className={cn("hover:text-[#0F172A]", isRTL && "arabic-text")}>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "inline-flex items-center rounded-sm px-0.5 transition-colors duration-200 hover:text-[#1C1C16]",
+                        isRTL && "arabic-text"
+                      )}
+                    >
                       {mapLabel(item)}
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
-          </div>
-        </div>
+          </motion.div>
 
-        <div className="relative z-10 pb-6">
+          <motion.div
+            variants={fadeUp}
+            className={cn(
+              "relative z-10 col-span-full mt-auto flex flex-col gap-6 pb-2 lg:flex-row lg:items-start lg:justify-between",
+              isRTL && "lg:flex-row-reverse"
+            )}
+          >
+            <form className="flex w-full max-w-[240px] flex-col gap-2.5" onSubmit={(event) => event.preventDefault()}>
+              <p className={cn("text-xs font-medium text-[#161611]", isRTL ? "arabic-text" : "uppercase tracking-[0.12em]")}>
+                {copy.contactTitle}
+              </p>
+              <Input
+                name="email"
+                type="email"
+                placeholder={copy.contactEmail}
+                className={cn(
+                  "h-9 border-black/10 bg-transparent text-sm text-[#0F1F1E] placeholder:text-[#5D5D54]/75 focus-visible:ring-[#4ED1B2]",
+                  isRTL && "arabic-text"
+                )}
+              />
+              <textarea
+                name="message"
+                rows={2}
+                placeholder={copy.contactMessage}
+                className={cn(
+                  "min-h-20 w-full resize-none border border-black/10 bg-transparent px-3 py-2 text-sm text-[#0F1F1E] outline-none placeholder:text-[#5D5D54]/75 focus-visible:ring-2 focus-visible:ring-[#4ED1B2]",
+                  isRTL && "arabic-text"
+                )}
+              />
+              <div className={cn("pt-1", isRTL && "text-right")}>
+                <Button
+                  type="submit"
+                  className={cn(
+                    "h-9 bg-[#0F1F1E] px-4 text-[11px] text-[#F6F7F9] hover:bg-[#162A28]",
+                    isRTL ? "arabic-text" : "uppercase tracking-[0.1em]"
+                  )}
+                >
+                  {copy.contactAction}
+                </Button>
+              </div>
+            </form>
+
+            <div className={cn("flex w-full max-w-[300px] flex-col gap-2.5 lg:items-end", isRTL ? "items-end lg:items-start" : "items-start")}>
+              <div className={cn("space-y-2", isRTL ? "text-right lg:text-left" : "lg:text-right")}>
+                <p className={cn("text-xs font-medium text-[#161611]", isRTL ? "arabic-text" : "uppercase tracking-[0.12em]")}>
+                  {copy.socialTitle}
+                </p>
+                <p className={cn("text-sm leading-7 text-[#5D5D54]", isRTL && "arabic-text")}>{copy.socialText}</p>
+              </div>
+
+              <div className={cn("flex flex-wrap items-center gap-2 pt-1", isRTL && "justify-end")}>
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={social.label}
+                    className="inline-flex size-8 items-center justify-center border border-black/10 text-[#34413F] transition-colors duration-200 hover:border-[#4ED1B2] hover:text-[#22C7AC]"
+                  >
+                    <social.icon className="size-3.5" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.5 }}
+          className={cn("relative z-10 mt-1 flex items-center justify-between gap-4 pb-3", isRTL && "flex-row-reverse")}
+        >
           <p className={cn("text-sm text-[#8A93A6]", isRTL && "arabic-text text-right")}>{copy.rights}</p>
-        </div>
+          <div className={cn("flex items-center gap-4 text-sm text-[#8A93A6]", isRTL && "arabic-text flex-row-reverse")}>
+            <Link href="#" className="transition-colors duration-200 hover:text-[#5D5D54]">
+              {copy.privacy}
+            </Link>
+            <span aria-hidden="true">|</span>
+            <Link href="#" className="transition-colors duration-200 hover:text-[#5D5D54]">
+              {copy.terms}
+            </Link>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

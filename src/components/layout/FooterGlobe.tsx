@@ -2,244 +2,258 @@
 
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import * as THREE from "three";
 
-const GLOBE_RADIUS = 1.55;
-const ICON_OFFSET = 0.06;
+const GLOBE_RADIUS = 1.0;
+const GLOBE_CENTER_Y = -0.84;
 
-type SocialKey = "instagram" | "x" | "linkedin" | "youtube";
+type DotCloud = {
+  oceanDots: Float32Array;
+  landDots: Float32Array;
+};
 
-type SocialMarker = {
-  key: SocialKey;
-  color: string;
+type LatLonPoint = {
   lat: number;
   lon: number;
 };
 
-const DEG = Math.PI / 180;
+type LandPolygon = {
+  points: LatLonPoint[];
+};
 
-const SOCIAL_MARKERS: SocialMarker[] = [
-  { key: "instagram", color: "#E4405F", lat: 24, lon: 22 },
-  { key: "x", color: "#0F172A", lat: 8, lon: 124 },
-  { key: "linkedin", color: "#0A66C2", lat: -16, lon: 70 },
-  { key: "youtube", color: "#FF0000", lat: 20, lon: -98 },
+const LAND_POLYGONS: LandPolygon[] = [
+  {
+    // North America
+    points: [
+      { lat: 72, lon: -166 }, { lat: 70, lon: -150 }, { lat: 66, lon: -136 }, { lat: 61, lon: -126 },
+      { lat: 55, lon: -124 }, { lat: 50, lon: -127 }, { lat: 45, lon: -124 }, { lat: 37, lon: -122 },
+      { lat: 32, lon: -116 }, { lat: 25, lon: -112 }, { lat: 23, lon: -106 }, { lat: 24, lon: -98 },
+      { lat: 27, lon: -90 }, { lat: 31, lon: -83 }, { lat: 36, lon: -78 }, { lat: 43, lon: -66 },
+      { lat: 50, lon: -60 }, { lat: 56, lon: -66 }, { lat: 62, lon: -74 }, { lat: 67, lon: -90 },
+      { lat: 71, lon: -112 }, { lat: 72, lon: -138 },
+    ],
+  },
+  {
+    // South America
+    points: [
+      { lat: 12, lon: -81 }, { lat: 8, lon: -78 }, { lat: 3, lon: -77 }, { lat: -3, lon: -78 },
+      { lat: -10, lon: -79 }, { lat: -16, lon: -76 }, { lat: -23, lon: -73 }, { lat: -31, lon: -71 },
+      { lat: -39, lon: -73 }, { lat: -47, lon: -70 }, { lat: -54, lon: -66 }, { lat: -52, lon: -58 },
+      { lat: -45, lon: -50 }, { lat: -36, lon: -46 }, { lat: -26, lon: -44 }, { lat: -14, lon: -41 },
+      { lat: -2, lon: -46 }, { lat: 4, lon: -52 }, { lat: 9, lon: -61 }, { lat: 12, lon: -74 },
+    ],
+  },
+  {
+    // Europe
+    points: [
+      { lat: 36, lon: -10 }, { lat: 43, lon: -6 }, { lat: 48, lon: 0 }, { lat: 54, lon: 7 },
+      { lat: 58, lon: 15 }, { lat: 62, lon: 24 }, { lat: 66, lon: 34 }, { lat: 64, lon: 44 },
+      { lat: 58, lon: 40 }, { lat: 54, lon: 28 }, { lat: 49, lon: 20 }, { lat: 45, lon: 14 },
+      { lat: 41, lon: 9 }, { lat: 37, lon: 2 },
+    ],
+  },
+  {
+    // Africa
+    points: [
+      { lat: 37, lon: -17 }, { lat: 34, lon: -7 }, { lat: 32, lon: 4 }, { lat: 31, lon: 14 },
+      { lat: 30, lon: 25 }, { lat: 22, lon: 35 }, { lat: 12, lon: 44 }, { lat: 3, lon: 50 },
+      { lat: -8, lon: 45 }, { lat: -18, lon: 40 }, { lat: -28, lon: 33 }, { lat: -35, lon: 20 },
+      { lat: -34, lon: 10 }, { lat: -28, lon: 3 }, { lat: -20, lon: -4 }, { lat: -8, lon: -10 },
+      { lat: 3, lon: -14 }, { lat: 14, lon: -17 }, { lat: 24, lon: -16 }, { lat: 32, lon: -12 },
+    ],
+  },
+  {
+    // Asia main
+    points: [
+      { lat: 42, lon: 40 }, { lat: 48, lon: 58 }, { lat: 54, lon: 75 }, { lat: 59, lon: 95 },
+      { lat: 58, lon: 118 }, { lat: 54, lon: 136 }, { lat: 50, lon: 150 }, { lat: 43, lon: 144 },
+      { lat: 35, lon: 136 }, { lat: 27, lon: 125 }, { lat: 20, lon: 117 }, { lat: 14, lon: 106 },
+      { lat: 10, lon: 95 }, { lat: 15, lon: 84 }, { lat: 22, lon: 74 }, { lat: 30, lon: 66 },
+      { lat: 37, lon: 55 },
+    ],
+  },
+  {
+    // India / Arabia bridge
+    points: [
+      { lat: 30, lon: 45 }, { lat: 27, lon: 53 }, { lat: 23, lon: 60 }, { lat: 19, lon: 67 },
+      { lat: 13, lon: 74 }, { lat: 8, lon: 77 }, { lat: 11, lon: 82 }, { lat: 18, lon: 88 },
+      { lat: 24, lon: 82 }, { lat: 29, lon: 72 }, { lat: 30, lon: 60 },
+    ],
+  },
+  {
+    // Australia
+    points: [
+      { lat: -10, lon: 113 }, { lat: -16, lon: 122 }, { lat: -23, lon: 133 }, { lat: -31, lon: 143 },
+      { lat: -39, lon: 151 }, { lat: -44, lon: 142 }, { lat: -42, lon: 130 }, { lat: -36, lon: 120 },
+      { lat: -28, lon: 114 }, { lat: -18, lon: 112 },
+    ],
+  },
+  {
+    // Greenland
+    points: [
+      { lat: 83, lon: -72 }, { lat: 80, lon: -60 }, { lat: 76, lon: -46 }, { lat: 72, lon: -34 },
+      { lat: 67, lon: -28 }, { lat: 63, lon: -38 }, { lat: 66, lon: -52 }, { lat: 72, lon: -64 },
+    ],
+  },
+  {
+    // Antarctica
+    points: [
+      { lat: -72, lon: -180 }, { lat: -76, lon: -140 }, { lat: -79, lon: -90 }, { lat: -80, lon: -40 },
+      { lat: -78, lon: 20 }, { lat: -80, lon: 80 }, { lat: -77, lon: 135 }, { lat: -72, lon: 180 },
+      { lat: -90, lon: 180 }, { lat: -90, lon: -180 },
+    ],
+  },
 ];
 
-function roundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-  ctx.lineTo(x, y + r);
-  ctx.quadraticCurveTo(x, y, x + r, y);
-  ctx.closePath();
+function normalizeLongitude(lon: number) {
+  let value = lon;
+  while (value > 180) value -= 360;
+  while (value < -180) value += 360;
+  return value;
 }
 
-function drawIcon(ctx: CanvasRenderingContext2D, key: SocialKey, color: string) {
-  const size = 256;
+function unwrapPolygon(points: LatLonPoint[], lon: number) {
+  const target = normalizeLongitude(lon);
+  const unwrapped: LatLonPoint[] = [];
+  let previous = normalizeLongitude(points[0].lon);
+  let offset = 0;
+  unwrapped.push({ lat: points[0].lat, lon: previous });
 
-  ctx.clearRect(0, 0, size, size);
-  ctx.save();
-  ctx.translate(size / 2, size / 2);
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-
-  if (key === "instagram") {
-    ctx.lineWidth = 12;
-    roundedRect(ctx, -44, -44, 88, 88, 24);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(0, 0, 20, 0, Math.PI * 2);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(30, -30, 7, 0, Math.PI * 2);
-    ctx.fill();
+  for (let i = 1; i < points.length; i += 1) {
+    let current = normalizeLongitude(points[i].lon);
+    const diff = current - previous;
+    if (diff > 180) offset -= 360;
+    if (diff < -180) offset += 360;
+    current += offset;
+    unwrapped.push({ lat: points[i].lat, lon: current });
+    previous = current;
   }
 
-  if (key === "x") {
-    ctx.lineWidth = 14;
-    ctx.beginPath();
-    ctx.moveTo(-34, -40);
-    ctx.lineTo(34, 40);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(34, -40);
-    ctx.lineTo(-34, 40);
-    ctx.stroke();
-  }
-
-  if (key === "linkedin") {
-    ctx.font = "700 78px Inter, Arial, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("in", 8, 8);
-  }
-
-  if (key === "youtube") {
-    ctx.lineWidth = 10;
-    roundedRect(ctx, -52, -34, 104, 68, 20);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(-10, -16);
-    ctx.lineTo(24, 0);
-    ctx.lineTo(-10, 16);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  ctx.restore();
-}
-
-function createIconTexture(key: SocialKey, color: string) {
-  const canvas = document.createElement("canvas");
-  canvas.width = 256;
-  canvas.height = 256;
-  const context = canvas.getContext("2d");
-
-  if (!context) {
-    return null;
-  }
-
-  drawIcon(context, key, color);
-
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.needsUpdate = true;
-  texture.minFilter = THREE.LinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-  texture.generateMipmaps = false;
-  return texture;
-}
-
-function longitudeDelta(a: number, b: number) {
-  const delta = Math.abs(a - b) % 360;
-  return delta > 180 ? 360 - delta : delta;
-}
-
-function continentMask(lat: number, lon: number) {
-  const gaussian = (latC: number, lonC: number, latR: number, lonR: number, weight: number) => {
-    const dLat = (lat - latC) / latR;
-    const dLon = longitudeDelta(lon, lonC) / lonR;
-    return Math.exp(-(dLat * dLat + dLon * dLon) * 1.28) * weight;
-  };
-
-  let score = 0;
-  score += gaussian(42, 85, 25, 55, 1.08);
-  score += gaussian(24, 78, 11, 19, 0.79);
-  score += gaussian(50, 20, 14, 21, 0.74);
-  score += gaussian(10, 22, 38, 26, 1.0);
-  score += gaussian(36, -102, 21, 34, 0.84);
-  score += gaussian(-17, -62, 24, 21, 0.75);
-  score += gaussian(-26, 136, 10, 17, 0.56);
-  return score > 0.44;
-}
-
-function createPointCloud(targetCount = 7600) {
-  const points: number[] = [];
-
-  outer: for (let lat = -66; lat <= 80; lat += 1.35) {
-    for (let lon = -180; lon < 180; lon += 1.35) {
-      if (points.length / 3 >= targetCount) {
-        break outer;
-      }
-
-      if (!continentMask(lat, lon)) {
-        continue;
-      }
-
-      const latRad = lat * DEG;
-      const lonRad = lon * DEG;
-      const cosLat = Math.cos(latRad);
-
-      points.push(cosLat * Math.cos(lonRad), Math.sin(latRad), cosLat * Math.sin(lonRad));
+  const options = [target, target + 360, target - 360];
+  let bestTarget = options[0];
+  let bestDistance = Number.POSITIVE_INFINITY;
+  for (const option of options) {
+    const distance = Math.min(...unwrapped.map((p) => Math.abs(p.lon - option)));
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestTarget = option;
     }
   }
 
-  return new Float32Array(points);
+  return { points: unwrapped, targetLon: bestTarget };
 }
 
-const POINTS = createPointCloud();
+function isPointInPolygon(lat: number, lon: number, polygon: LandPolygon) {
+  const { points, targetLon } = unwrapPolygon(polygon.points, lon);
 
-function latLonToVector(lat: number, lon: number, radius: number) {
-  const latRad = lat * DEG;
-  const lonRad = lon * DEG;
-  const cosLat = Math.cos(latRad);
+  let inside = false;
+  for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+    const xi = points[i].lon;
+    const yi = points[i].lat;
+    const xj = points[j].lon;
+    const yj = points[j].lat;
 
-  return new THREE.Vector3(radius * cosLat * Math.cos(lonRad), radius * Math.sin(latRad), radius * cosLat * Math.sin(lonRad));
+    const intersects =
+      yi > lat !== yj > lat && targetLon < ((xj - xi) * (lat - yi)) / (yj - yi + 1e-9) + xi;
+    if (intersects) inside = !inside;
+  }
+
+  return inside;
 }
+
+function isLandPoint(lat: number, lon: number) {
+  return LAND_POLYGONS.some((polygon) => isPointInPolygon(lat, lon, polygon));
+}
+
+function createEarthDotCloud(pointCount = 14000): DotCloud {
+  const oceanBuffer: number[] = [];
+  const landBuffer: number[] = [];
+
+  for (let i = 0; i < pointCount; i += 1) {
+    const y = 1 - (i / (pointCount - 1)) * 2;
+    const radiusAtY = Math.sqrt(1 - y * y);
+    const theta = Math.PI * (3 - Math.sqrt(5)) * i;
+
+    const x = Math.cos(theta) * radiusAtY;
+    const z = Math.sin(theta) * radiusAtY;
+
+    const lat = Math.asin(y) * (180 / Math.PI);
+    const lon = Math.atan2(z, x) * (180 / Math.PI);
+
+    if (isLandPoint(lat, lon)) {
+      landBuffer.push(x, y, z);
+    } else {
+      oceanBuffer.push(x, y, z);
+    }
+  }
+
+  return {
+    oceanDots: new Float32Array(oceanBuffer),
+    landDots: new Float32Array(landBuffer),
+  };
+}
+
+const DOTS = createEarthDotCloud();
 
 function FooterGlobeScene() {
-  const pointGeometry = useMemo(() => {
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.BufferAttribute(POINTS, 3));
-    return geometry;
-  }, []);
+  const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
-  const iconTextures = useMemo(() => {
-    if (typeof window === "undefined") {
-      return null;
-    }
+  const geometries = useMemo(() => {
+    const createGeometry = (source: Float32Array) => {
+      const geometry = new THREE.BufferGeometry();
+      const scaled = new Float32Array(source.length);
 
-    const textures: Partial<Record<SocialKey, THREE.CanvasTexture>> = {};
-
-    for (const marker of SOCIAL_MARKERS) {
-      const texture = createIconTexture(marker.key, marker.color);
-      if (texture) {
-        textures[marker.key] = texture;
+      for (let i = 0; i < source.length; i += 3) {
+        scaled[i] = source[i] * GLOBE_RADIUS;
+        scaled[i + 1] = source[i + 1] * GLOBE_RADIUS;
+        scaled[i + 2] = source[i + 2] * GLOBE_RADIUS;
       }
-    }
 
-    return textures as Record<SocialKey, THREE.CanvasTexture>;
+      geometry.setAttribute("position", new THREE.BufferAttribute(scaled, 3));
+      return geometry;
+    };
+
+    return {
+      ocean: createGeometry(DOTS.oceanDots),
+      land: createGeometry(DOTS.landDots),
+    };
   }, []);
 
   useEffect(() => {
+    const controls = controlsRef.current;
+    if (controls) {
+      const distance = controls.object.position.distanceTo(controls.target);
+      controls.minDistance = distance;
+      controls.maxDistance = distance;
+      controls.update();
+    }
+
     return () => {
-      pointGeometry.dispose();
-      Object.values(iconTextures ?? {}).forEach((texture) => texture?.dispose());
+      geometries.ocean.dispose();
+      geometries.land.dispose();
     };
-  }, [iconTextures, pointGeometry]);
+  }, [geometries]);
 
   return (
     <>
-      <ambientLight intensity={0.72} />
-      <hemisphereLight args={["#ffffff", "#e4e8ef", 0.4]} />
-      <directionalLight position={[1.3, 1.1, 2.4]} intensity={0.24} />
-      <directionalLight position={[-1.2, -0.3, -2.0]} intensity={0.11} />
+      <ambientLight intensity={0.9} />
+      <hemisphereLight args={["#ffffff", "#e9edf3", 0.28]} />
+      <directionalLight position={[1.2, 1.1, 2.2]} intensity={0.18} />
 
-      <group position={[0, GLOBE_RADIUS * -0.55, 0]}>
-        <mesh>
-          <sphereGeometry args={[GLOBE_RADIUS, 64, 64]} />
-          <meshStandardMaterial color="#f3f5f8" roughness={1} metalness={0} transparent opacity={0.3} />
-        </mesh>
-
-        <points geometry={pointGeometry}>
-          <pointsMaterial color="#61656d" size={0.018} sizeAttenuation transparent opacity={0.98} depthWrite={false} />
+      <group position={[0, GLOBE_CENTER_Y, 0]} rotation={[0.04, 0.2, 0]}>
+        <points geometry={geometries.ocean}>
+          <pointsMaterial color="#C1C9D5" size={0.0085} sizeAttenuation transparent opacity={0.14} depthWrite={false} />
         </points>
-
-        {iconTextures &&
-          SOCIAL_MARKERS.map((marker) => (
-            <sprite
-              key={marker.key}
-              position={latLonToVector(marker.lat, marker.lon, GLOBE_RADIUS + ICON_OFFSET)}
-              scale={[0.34, 0.34, 0.34]}
-            >
-              <spriteMaterial map={iconTextures[marker.key]} transparent opacity={1} depthWrite={false} depthTest toneMapped={false} />
-            </sprite>
-          ))}
+        <points geometry={geometries.land}>
+          <pointsMaterial color="#53607A" size={0.019} sizeAttenuation transparent opacity={0.99} depthWrite={false} />
+        </points>
       </group>
 
       <OrbitControls
-        target={[0, GLOBE_RADIUS * -0.55, 0]}
+        ref={controlsRef}
+        target={[0, GLOBE_CENTER_Y, 0]}
         enableRotate
         enablePan={false}
         enableZoom={false}
@@ -248,7 +262,7 @@ function FooterGlobeScene() {
         autoRotate
         autoRotateSpeed={0.2}
         enableDamping
-        dampingFactor={0.1}
+        dampingFactor={0.09}
       />
     </>
   );
@@ -256,7 +270,7 @@ function FooterGlobeScene() {
 
 export default function FooterGlobe() {
   return (
-    <Canvas camera={{ position: [0, 0, 3.25], fov: 35 }} gl={{ antialias: true, alpha: true }} dpr={[1, 1.5]}>
+    <Canvas camera={{ position: [0, 0, 3.55], fov: 36 }} gl={{ antialias: true, alpha: true }} dpr={[1, 1.5]}>
       <FooterGlobeScene />
     </Canvas>
   );
