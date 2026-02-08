@@ -448,10 +448,10 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                 <NavigationMenuContent
                   onMouseEnter={clearCloseTimeout}
                   onMouseLeave={scheduleClose}
-                  className="md:!fixed md:!inset-x-0 md:!left-0 md:!right-0 md:!mt-0 md:!w-full md:!max-w-none md:!translate-x-0 !overflow-visible rounded-none border-x-0 border-b border-t border-black/5 bg-[#F8F8F6] !p-0 shadow-[0_22px_40px_rgba(12,12,11,0.08)]"
+                  className="md:!fixed md:!left-1/2 md:!right-auto md:!mt-0 md:!w-[min(1120px,calc(100vw-2rem))] md:!max-w-none md:!-translate-x-1/2 !overflow-visible !rounded-2xl !border !border-black/10 bg-[#F8F8F6] !p-0 shadow-[0_22px_40px_rgba(12,12,11,0.08)]"
                   style={{ top: `${headerHeight}px` }}
                 >
-                  <div className="mx-auto w-full max-w-7xl px-6">
+                  <div className="w-full">
                     <MegaMenuContent
                       columns={item.columns}
                       preview={{
@@ -470,12 +470,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <div
-          className={cn(
-            "absolute right-24 hidden md:flex",
-            isRTL && "left-24 right-auto"
-          )}
-        >
+        <div className={cn("flex items-center gap-3", isRTL && "flex-row-reverse")}>
           <Button
             type="button"
             variant="ghost"
@@ -483,15 +478,16 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
             onClick={onToggleLanguage}
             aria-label="Toggle language"
             className={cn(
-              "h-9 rounded-full border border-black/15 bg-white/70 px-4 text-[11px] font-bold text-[#1D1D17] shadow-[0_4px_12px_rgba(0,0,0,0.06)] backdrop-blur-sm transition-colors hover:bg-white",
-              isRTL ? "arabic-text tracking-normal" : "uppercase tracking-[0.18em]"
+              "hidden h-auto bg-transparent px-0 text-[11px] font-semibold text-[#4D4D45] transition-colors hover:bg-transparent hover:text-[#181814] md:inline-flex",
+              isRTL ? "arabic-text tracking-normal" : "uppercase tracking-[0.22em]"
             )}
           >
             {labels.language}
           </Button>
-        </div>
 
-        <StaggeredMenu
+          <span className="hidden h-5 w-px bg-black/15 md:block" aria-hidden="true" />
+
+          <StaggeredMenu
           position={isRTL ? "left" : "right"}
           items={menuItems}
           menuLabel={labels.menu}
@@ -529,7 +525,8 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
               </Button>
             </div>
           }
-        />
+          />
+        </div>
       </nav>
     </header>
   );
