@@ -241,7 +241,7 @@ const megaMenuItems: MegaMenuItem[] = [
         {
           title: "Case Use Scenarios",
           description: "Practical examples for Syrian businesses and new investors",
-          href: "#",
+          href: "#case-studies",
           icon: BriefcaseBusiness,
         },
         {
@@ -255,7 +255,7 @@ const megaMenuItems: MegaMenuItem[] = [
         {
           title: "Methodology",
           description: "Modern methods updated with changes in search and AI systems",
-          href: "#",
+          href: "#proofs",
           icon: Newspaper,
         },
         {
@@ -267,7 +267,7 @@ const megaMenuItems: MegaMenuItem[] = [
         {
           title: "Contact",
           description: "Talk to MASAR and plan your next digital growth phase",
-          href: "#",
+          href: "#contact",
           icon: LifeBuoy,
         },
       ],

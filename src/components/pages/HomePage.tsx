@@ -8,6 +8,8 @@ import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/Hero";
 import ServicesGrid from "@/components/sections/ServicesGrid";
 import AboutUs from "@/components/sections/AboutUs";
+import CasesSection from "@/components/sections/CasesSection";
+import ProofsSection from "@/components/sections/ProofsSection";
 import { cn } from "@/lib/utils";
 import type { Language } from "@/lib/use-language";
 
@@ -38,8 +40,12 @@ export default function HomePage({ language }: HomePageProps) {
         <Hero language={language} />
         <ServicesGrid language={language} />
         <AboutUs language={language} />
+        <CasesSection language={language} />
+        <ProofsSection language={language} />
       </main>
-      <Footer language={language} />
+      <div id="contact">
+        <Footer language={language} />
+      </div>
     </div>
   );
 }
