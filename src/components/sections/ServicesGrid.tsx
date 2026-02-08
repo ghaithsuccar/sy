@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -13,36 +13,36 @@ import { cn } from "@/lib/utils";
 const services = [
   {
     key: "web",
-    category: { en: "Web Dev", ar: "تطوير ويب" },
-    title: { en: "Web Dev & Hosting", ar: "تطوير واستضافة المواقع" },
+    category: { en: "Web", ar: "الويب" },
+    title: { en: "Web Development & Hosting", ar: "تطوير المواقع والاستضافة" },
     image:
       "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "branding",
     category: { en: "Branding", ar: "الهوية" },
-    title: { en: "Branding Systems", ar: "أنظمة العلامة التجارية" },
+    title: { en: "Graphic Design & Branding", ar: "التصميم والهوية البصرية" },
     image:
       "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "automation",
-    category: { en: "AI Automation", ar: "أتمتة ذكية" },
-    title: { en: "AI Automation", ar: "الأتمتة بالذكاء الاصطناعي" },
+    category: { en: "Automation", ar: "الأتمتة" },
+    title: { en: "Automation Systems", ar: "أنظمة الأتمتة" },
     image:
       "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "seo",
-    category: { en: "SEO / GMR", ar: "سيو / خرائط" },
-    title: { en: "SEO & GMR", ar: "تحسين الظهور والخرائط" },
+    category: { en: "Visibility", ar: "الظهور الرقمي" },
+    title: { en: "SEO, GMR & AI Visibility", ar: "السيو وخرائط جوجل والظهور في الذكاء الاصطناعي" },
     image:
       "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "reputation",
-    category: { en: "Reputation", ar: "السمعة" },
-    title: { en: "Reputation Mgmt", ar: "إدارة السمعة" },
+    category: { en: "Trust", ar: "السمعة" },
+    title: { en: "Reputation & Reviews", ar: "إدارة السمعة والتقييمات" },
     image:
       "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80",
   },
@@ -125,7 +125,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
                   isRTL ? "arabic-text" : "uppercase tracking-[0.35em]"
                 )}
               >
-                {isRTL ? "خدماتنا" : "Our Services"}
+                {isRTL ? "خدماتنا الأساسية" : "Core Services"}
               </p>
               <h2
                 className={cn(
@@ -134,7 +134,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
                 )}
                 style={{ textShadow: headlineTextShadow }}
               >
-                {isRTL ? "نجعل علامتك التجارية لا تُنسى" : "WE MAKE BRANDS UNSKIPPABLE"}
+                {isRTL ? "نبني بنية رقمية حديثة قابلة للنمو" : "WE BUILD MODERN DIGITAL INFRASTRUCTURE"}
               </h2>
             </motion.div>
           </div>
@@ -157,10 +157,10 @@ export default function ServicesGrid({ language }: { language: Language }) {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                   <Badge
-                    variant="secondary"
+                    variant="brand-outline"
                     className={cn(
-                      "absolute top-5 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold text-[#0F1F1E]",
-                      isRTL ? "right-5 arabic-text" : "left-5 uppercase tracking-[0.3em]"
+                      "absolute top-5 rounded-full px-3.5 py-1.5 text-[10px] shadow-[0_12px_20px_rgba(6,18,25,0.3)]",
+                      isRTL ? "right-5 arabic-text tracking-normal" : "left-5 tracking-[0.24em]"
                     )}
                   >
                     {service.category[language]}
@@ -186,15 +186,16 @@ export default function ServicesGrid({ language }: { language: Language }) {
 
             <Button
               type="button"
-              variant="secondary"
+              variant="brand-outline"
               className={cn(
-                "group h-auto rounded-full border border-white/20 bg-white px-6 py-3 text-xs font-semibold text-[#0F1F1E] transition-all duration-300 hover:-translate-y-2 hover:bg-white/90 hover:text-[#0F1F1E]",
+                "group h-12 min-w-[210px] justify-start border-white/60 bg-[#0A0A0A]/35 text-white backdrop-blur-sm before:bg-[#4ED1B2]/28 hover:bg-[#0A0A0A]/55",
+                "[&_svg]:text-white",
                 isRTL ? "arabic-text" : "uppercase tracking-[0.3em]"
               )}
             >
               <span className="inline-flex items-center gap-3">
-                {isRTL ? "عرض الكل" : "View All"}
-                <ArrowRight className={cn("h-4 w-4", isRTL && "rotate-180")} />
+                {isRTL ? "عرض كل الخدمات" : "View All Services"}
+                <span className="inline-flex size-8 items-center justify-center rounded-full border border-white/70 bg-white/15 transition-colors duration-200 group-hover:border-[#E6D8B8] group-hover:bg-[#E6D8B8]/28"><ArrowRight className={cn("size-4 text-white", isRTL && "rotate-180")} /></span>
               </span>
             </Button>
           </motion.div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -34,7 +34,7 @@ export default function AboutUs({ language }: { language: Language }) {
             isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
           )}
         >
-          {isRTL ? "من نحن" : "ABOUT US"}
+          {isRTL ? "عن مسار للتسويق" : "ABOUT MASAR"}
         </h2>
       </motion.div>
     </section>

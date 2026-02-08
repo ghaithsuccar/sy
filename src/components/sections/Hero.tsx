@@ -2,6 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { Suspense } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -22,14 +23,14 @@ export default function Hero({ language }: HeroProps) {
   const content = {
     headline:
       language === "ar"
-        ? "\u0627\u0641\u0636\u0644 \u0648\u0643\u0627\u0644\u0629 \u062a\u0633\u0648\u064a\u0642 \u0641\u064a \u0633\u0648\u0631\u064a\u0627"
-        : "Syria's Leading Marketing Agency",
+        ? "الوكالة الرقمية الحديثة للأعمال في سوريا"
+        : "Modern Digital Growth for Businesses in Syria",
     subheadline:
       language === "ar"
-        ? "\u0646\u062d\u0648\u0644 \u0627\u0644\u0639\u0644\u0627\u0645\u0627\u062a \u0627\u0644\u062a\u062c\u0627\u0631\u064a\u0629 \u0627\u0644\u0633\u0648\u0631\u064a\u0629 \u0627\u0644\u0649 \u0642\u0635\u0635 \u0646\u062c\u0627\u062d \u0639\u0628\u0631 \u0627\u0644\u0627\u0633\u062a\u0631\u0627\u062a\u064a\u062c\u064a\u0629\u060c \u0627\u0644\u0645\u062d\u062a\u0648\u0649 \u0627\u0644\u0627\u0628\u062f\u0627\u0639\u064a\u060c \u0648\u0627\u0639\u0644\u0627\u0646\u0627\u062a \u0627\u0644\u0627\u062f\u0627\u0621."
-        : "We turn Syrian brands into growth stories with strategy, creative content, and performance ads.",
-    primaryCta: language === "ar" ? "\u0627\u062d\u062c\u0632 \u0627\u0633\u062a\u0634\u0627\u0631\u0629 \u0645\u062c\u0627\u0646\u064a\u0629" : "Book a Free Call",
-    secondaryCta: language === "ar" ? "\u0634\u0627\u0647\u062f \u0627\u0639\u0645\u0627\u0644\u0646\u0627" : "See Our Work",
+        ? "في مسار للتسويق نبني حضورا رقميا حقيقيا للشركات السورية والمستثمرين عبر التسويق الحديث، الأتمتة، وأنظمة جاهزة للذكاء الاصطناعي."
+        : "At MASAR Marketing, we help Syrian businesses and foreign investors build real online presence through modern marketing, automation, and AI-ready systems.",
+    primaryCta: language === "ar" ? "احجز استشارة" : "Book a Strategy Call",
+    secondaryCta: language === "ar" ? "استكشف خدماتنا" : "Explore Services",
   };
 
   return (
@@ -44,7 +45,7 @@ export default function Hero({ language }: HeroProps) {
       </div>
 
       {/* 2. Main Content Overlay */}
-      <div className="relative z-10 mx-auto flex flex-grow w-full max-w-5xl flex-col items-center justify-center text-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-grow flex-col items-center justify-center pb-28 text-center">
         <div className="space-y-12">
 
           {/* Logo / Brand Tag */}
@@ -55,13 +56,13 @@ export default function Hero({ language }: HeroProps) {
             className="flex justify-center"
           >
             <Badge
-              variant="secondary"
+              variant="brand-outline"
               className={cn(
-                "rounded-full bg-white px-5 py-2 text-xs font-semibold text-[#5F6368] shadow-sm ring-1 ring-[#E2E8F0]",
-                isRTL ? "arabic-text" : "uppercase tracking-widest"
+                "rounded-full px-6 py-2.5 text-[11px] shadow-[0_12px_24px_rgba(11,28,24,0.12)]",
+                isRTL ? "arabic-text tracking-normal" : "tracking-[0.24em]"
               )}
             >
-              {language === "ar" ? "\u0627\u0648\u062c | \u0648\u0643\u0627\u0644\u0629 \u062a\u0633\u0648\u064a\u0642 \u0633\u0648\u0631\u064a\u0629" : "Ouj | Syrian Marketing Agency"}
+              {language === "ar" ? "مسار للتسويق | وكالة رقمية حديثة" : "MASAR Marketing | AI-First Digital Agency"}
             </Badge>
           </motion.div>
 
@@ -87,32 +88,34 @@ export default function Hero({ language }: HeroProps) {
           >
             <Button
               asChild
-              className="group h-auto rounded-full bg-[#202124] px-8 py-4 text-[15px] font-medium text-white shadow-lg transition-all hover:bg-[#000000] hover:shadow-xl hover:-translate-y-0.5"
+              variant="brand-fill"
+              className={cn("group h-12 min-w-[220px] justify-center")}
             >
               <a href="#contact">
                 <span>{content.primaryCta}</span>
-                <svg
-                  className={cn("h-4 w-4 transition-transform group-hover:translate-x-1", isRTL && "rotate-180 group-hover:-translate-x-1")}
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
               </a>
             </Button>
 
             <Button
               asChild
-              variant="ghost"
-              className="h-auto rounded-full px-8 py-4 text-[15px] font-medium text-[#5F6368] transition-colors hover:bg-black/5 hover:text-[#202124]"
+              variant="brand-outline"
+              className={cn(
+                "h-12 min-w-[220px] justify-center",
+                isRTL && "[&_svg]:order-first [&_svg]:ml-0 [&_svg]:mr-4"
+              )}
             >
-              <a href="#services">{content.secondaryCta}</a>
+              <a href="#services">
+                <span>{content.secondaryCta}</span>
+                <span className="inline-flex size-8 items-center justify-center rounded-full border border-[#4ED1B2] bg-[#4ED1B2]/20 transition-colors duration-200 group-hover:border-[#E6D8B8] group-hover:bg-[#E6D8B8]/35">
+                  <ArrowRight className={cn("size-4 text-[#0F1F1E]", isRTL && "rotate-180")} />
+                </span>
+              </a>
             </Button>
           </motion.div>
         </div>
       </div>
 
-      {/* 3. Floating Icons Strip (Bottom) */}
-      <div className="relative z-10 w-full pb-12">
+      <div className="absolute bottom-14 left-0 right-0 z-10">
         <FloatingIconsStrip />
       </div>
     </section>

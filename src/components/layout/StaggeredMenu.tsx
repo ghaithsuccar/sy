@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { useCallback, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
 
@@ -32,6 +32,7 @@ type StaggeredMenuProps = {
   isRTL?: boolean;
   buttonClassName?: string;
   footer?: React.ReactNode;
+  customContent?: React.ReactNode;
   onMenuOpen?: () => void;
   onMenuClose?: () => void;
   triggerIconColor?: string;
@@ -50,13 +51,17 @@ export default function StaggeredMenu({
   isRTL = false,
   buttonClassName,
   footer,
+  customContent,
   onMenuOpen,
   onMenuClose,
   triggerIconColor = "#EF4444",
 }: StaggeredMenuProps) {
   const [open, setOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const panelId = useId();
+  const panelId = useMemo(
+    () => `staggered-menu-panel-${position}-${isRTL ? "rtl" : "ltr"}`,
+    [position, isRTL]
+  );
   const panelTitleId = `${panelId}-title`;
   const panelRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -221,19 +226,20 @@ export default function StaggeredMenu({
         ref={buttonRef}
         type="button"
         data-testid="staggered-menu-trigger"
-        data-mounted={canUseDOM ? "true" : "false"}
         aria-expanded={open}
         aria-controls={panelId}
         aria-haspopup="dialog"
         onClick={handleToggle}
         className={cn(
-          "relative inline-flex items-center gap-3 text-xs font-semibold tracking-[0.3em] text-[#0F1F1E] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0F1F1E]/40",
+          "relative inline-flex items-center gap-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0F1F1E]/40",
+          open && "bg-[#ECEAE5] text-[#1C1C16]",
           isRTL ? "arabic-text" : "uppercase",
           buttonClassName
         )}
-        style={{ color: open ? "#0F1F1E" : "#0F1F1E" }}
       >
-        <span className="relative h-3 overflow-hidden leading-none">
+        <span
+          className="relative h-6 overflow-hidden leading-6"
+        >
           <motion.span
             className="block"
             animate={{ y: open ? "-100%" : "0%" }}
@@ -347,59 +353,71 @@ export default function StaggeredMenu({
                       </button>
                     </div>
 
-                    <motion.ul
-                      className={cn("flex flex-col gap-4", isRTL && "items-end")}
-                      variants={listVariants}
-                      initial="hidden"
-                      animate="visible"
-                    >
-                      {items.map((item, index) => (
-                        <motion.li key={`${item.href}-${item.label}`} variants={itemVariants}>
-                          <Link
-                            href={item.href}
-                            aria-label={item.ariaLabel ?? item.label}
-                            onClick={handleClose}
-                            className={cn(
-                              "group flex items-baseline gap-4 text-[clamp(2.2rem,4vw,3.4rem)] font-semibold leading-none tracking-tight text-[#0F1F1E] transition-colors hover:text-[var(--sm-accent)]",
-                              isRTL ? "arabic-text" : "uppercase"
-                            )}
-                            style={accentStyle}
-                          >
-                            <span>{item.label}</span>
-                            {displayItemNumbering && (
-                              <span
-                                className="text-sm font-medium tracking-normal text-[var(--sm-accent)]"
+                    {customContent ? (
+                      <motion.div
+                        variants={itemVariants}
+                        initial="hidden"
+                        animate="visible"
+                      >
+                        {customContent}
+                      </motion.div>
+                    ) : (
+                      <>
+                        <motion.ul
+                          className={cn("flex flex-col gap-4", isRTL && "items-end")}
+                          variants={listVariants}
+                          initial="hidden"
+                          animate="visible"
+                        >
+                          {items.map((item, index) => (
+                            <motion.li key={`${item.href}-${item.label}`} variants={itemVariants}>
+                              <Link
+                                href={item.href}
+                                aria-label={item.ariaLabel ?? item.label}
+                                onClick={handleClose}
+                                className={cn(
+                                  "group flex items-baseline gap-4 text-[clamp(2.2rem,4vw,3.4rem)] font-semibold leading-none tracking-tight text-[#0F1F1E] transition-colors hover:text-[var(--sm-accent)]",
+                                  isRTL ? "arabic-text" : "uppercase"
+                                )}
                                 style={accentStyle}
                               >
-                                {String(index + 1).padStart(2, "0")}
-                              </span>
-                            )}
-                          </Link>
-                        </motion.li>
-                      ))}
-                    </motion.ul>
-
-                    {displaySocials && socialItems.length > 0 && (
-                      <div className="mt-6">
-                        <p
-                          className="text-sm font-semibold"
-                          style={{ color: accentColor }}
-                        >
-                          Socials
-                        </p>
-                        <div className="mt-3 flex flex-wrap gap-4">
-                          {socialItems.map((social) => (
-                            <Link
-                              key={social.href}
-                              href={social.href}
-                              className="text-base font-medium text-[#0F1F1E] transition-colors hover:text-[var(--sm-accent)]"
-                              style={accentStyle}
-                            >
-                              {social.label}
-                            </Link>
+                                <span>{item.label}</span>
+                                {displayItemNumbering && (
+                                  <span
+                                    className="text-sm font-medium tracking-normal text-[var(--sm-accent)]"
+                                    style={accentStyle}
+                                  >
+                                    {String(index + 1).padStart(2, "0")}
+                                  </span>
+                                )}
+                              </Link>
+                            </motion.li>
                           ))}
-                        </div>
-                      </div>
+                        </motion.ul>
+
+                        {displaySocials && socialItems.length > 0 && (
+                          <div className="mt-6">
+                            <p
+                              className="text-sm font-semibold"
+                              style={{ color: accentColor }}
+                            >
+                              Socials
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-4">
+                              {socialItems.map((social) => (
+                                <Link
+                                  key={social.href}
+                                  href={social.href}
+                                  className="text-base font-medium text-[#0F1F1E] transition-colors hover:text-[var(--sm-accent)]"
+                                  style={accentStyle}
+                                >
+                                  {social.label}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     )}
 
                     {footer}

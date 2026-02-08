@@ -21,8 +21,9 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: "Ouj | Digital Infrastructure Partner",
-  description: "Building digital infrastructure for business growth in Syria - using AI, automation and modern systems.",
+  title: "MASAR Marketing | AI-First Digital Infrastructure Partner",
+  description:
+    "MASAR Marketing is a modern AI-first agency in Damascus helping Syrian businesses and foreign investors build visibility, automation, and future-ready digital systems.",
 };
 
 

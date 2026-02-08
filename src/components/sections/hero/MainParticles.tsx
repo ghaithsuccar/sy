@@ -1,247 +1,265 @@
 "use client";
 
 import { useFrame, useThree } from "@react-three/fiber";
-import React, { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
-/**
- * Antigravity-style particles:
- * - cluster is CENTERED ON THE MOUSE (so it follows across the hero)
- * - smooth mouse target (no jitter)
- * - local influence + return spring (stable, not shaky)
- * - bigger points for visibility
- * - vertexColors gradient like the reference
- */
 export function MainParticles() {
-    const COUNT = 2400;
+  const COUNT = 2400;
 
-    const pointsRef = useRef<THREE.Points>(null);
-    const velocitiesRef = useRef<Float32Array>(new Float32Array(COUNT * 3));
+  const pointsRef = useRef<THREE.Points>(null);
+  const velocitiesRef = useRef<Float32Array>(new Float32Array(COUNT * 3));
 
-    const raycasterRef = useRef(new THREE.Raycaster());
-    const planeRef = useRef(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0)); // z=0 plane
-    const hitRef = useRef(new THREE.Vector3());
+  const raycasterRef = useRef(new THREE.Raycaster());
+  const planeRef = useRef(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0));
+  const hitRef = useRef(new THREE.Vector3());
 
-    // Smoothed mouse target
-    const mouseSmoothRef = useRef(new THREE.Vector2(0, 0));
+  const pointerTargetNdcRef = useRef(new THREE.Vector2(0, 0));
+  const pointerSmoothNdcRef = useRef(new THREE.Vector2(0, 0));
+  const mouseWorldRef = useRef(new THREE.Vector2(0, 0));
+  const centerRef = useRef(new THREE.Vector2(0, 0));
 
-    // Smoothed "cluster center" that follows the mouse (slightly laggy = premium feel)
-    const centerRef = useRef(new THREE.Vector2(0, 0));
+  const pointerInsideRef = useRef(false);
 
-    const { camera } = useThree();
+  const { camera, gl } = useThree();
 
-    // Deterministic pseudo-random so particle generation stays pure/idempotent.
-    const rand01 = (index: number, seed: number) => {
-        const x = Math.sin(index * 12.9898 + seed * 78.233) * 43758.5453;
-        return x - Math.floor(x);
+  useEffect(() => {
+    const dom = gl.domElement;
+
+    const updatePointerNdc = (clientX: number, clientY: number) => {
+      const rect = dom.getBoundingClientRect();
+      const inside =
+        clientX >= rect.left &&
+        clientX <= rect.right &&
+        clientY >= rect.top &&
+        clientY <= rect.bottom;
+
+      pointerInsideRef.current = inside;
+
+      if (!inside) return;
+
+      const x = ((clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
+      pointerTargetNdcRef.current.set(
+        THREE.MathUtils.clamp(x, -1, 1),
+        THREE.MathUtils.clamp(y, -1, 1)
+      );
     };
 
-    const { positions, origins, colors } = useMemo(() => {
-        const positions = new Float32Array(COUNT * 3);
-        const origins = new Float32Array(COUNT * 3);
-        const colors = new Float32Array(COUNT * 3);
+    const onPointerMove = (event: PointerEvent) => {
+      updatePointerNdc(event.clientX, event.clientY);
+    };
 
-        // Build a burst around (0,0) first — we’ll offset it each frame by the moving center
-        const maxR = 8.5;
-        const minR = 0.7;
+    const onTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!touch) return;
+      updatePointerNdc(touch.clientX, touch.clientY);
+    };
 
-        const tmpColor = new THREE.Color();
+    const onWindowBlur = () => {
+      pointerInsideRef.current = false;
+    };
 
-        for (let i = 0; i < COUNT; i++) {
-            const i3 = i * 3;
-            const r1 = rand01(i, 1);
-            const r2 = rand01(i, 2);
-            const r3 = rand01(i, 3);
-            const r4 = rand01(i, 4);
-            const r5 = rand01(i, 5);
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("blur", onWindowBlur);
 
-            // Fan burst: -105..105 degrees
-            const a = THREE.MathUtils.degToRad(
-                THREE.MathUtils.lerp(-105, 105, r1)
-            );
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("blur", onWindowBlur);
+    };
+  }, [gl]);
 
-            // Dense near center, sparser outward
-            const r = minR + (r2 ** 0.6) * (maxR - minR);
+  const rand01 = (index: number, seed: number) => {
+    const x = Math.sin(index * 12.9898 + seed * 78.233) * 43758.5453;
+    return x - Math.floor(x);
+  };
 
-            // Initial around (0,0)
-            const x = Math.cos(a) * r + (r3 - 0.5) * 0.25;
-            const y = Math.sin(a) * r + (r4 - 0.5) * 0.25;
-            const z = (r5 - 0.5) * 0.6;
+  const { positions, origins, colors } = useMemo(() => {
+    const positions = new Float32Array(COUNT * 3);
+    const origins = new Float32Array(COUNT * 3);
+    const colors = new Float32Array(COUNT * 3);
+    const tmpColor = new THREE.Color();
 
-            positions[i3] = x;
-            positions[i3 + 1] = y;
-            positions[i3 + 2] = z;
+    const minR = 0.35;
+    const maxR = 9.2;
 
-            origins[i3] = x;
-            origins[i3 + 1] = y;
-            origins[i3 + 2] = z;
+    for (let i = 0; i < COUNT; i++) {
+      const i3 = i * 3;
 
-            // Angle -> hue gradient (blue/purple -> red/orange/yellow)
-            const t = (a + THREE.MathUtils.degToRad(105)) / THREE.MathUtils.degToRad(210);
-            const hue = THREE.MathUtils.lerp(0.60, 0.12, t);
-            const sat = 0.9;
-            const light = THREE.MathUtils.lerp(0.56, 0.62, Math.min(1, r / maxR));
+      const r1 = rand01(i, 1);
+      const r2 = rand01(i, 2);
+      const r3 = rand01(i, 3);
+      const r4 = rand01(i, 4);
+      const r5 = rand01(i, 5);
 
-            tmpColor.setHSL(hue, sat, light);
-            colors[i3] = tmpColor.r;
-            colors[i3 + 1] = tmpColor.g;
-            colors[i3 + 2] = tmpColor.b;
-        }
+      const angle = r1 * Math.PI * 2;
+      const radius = minR + (r2 ** 0.72) * (maxR - minR);
 
-        return { positions, origins, colors };
-    }, []);
+      const x = Math.cos(angle) * radius * 1.02 + (r3 - 0.5) * 0.28;
+      const y = Math.sin(angle) * radius * 0.92 + (r4 - 0.5) * 0.28;
+      const z = (r5 - 0.5) * 0.6;
 
-    useFrame((state, delta) => {
-        const pts = pointsRef.current;
-        if (!pts) return;
+      positions[i3] = x;
+      positions[i3 + 1] = y;
+      positions[i3 + 2] = z;
 
-        const dt = Math.min(delta, 1 / 60);
+      origins[i3] = x;
+      origins[i3 + 1] = y;
+      origins[i3 + 2] = z;
 
-        // Pointer -> world (z=0 plane)
-        raycasterRef.current.setFromCamera(state.pointer, camera);
-        raycasterRef.current.ray.intersectPlane(planeRef.current, hitRef.current);
+      const t = angle / (Math.PI * 2);
+      const hue = THREE.MathUtils.euclideanModulo(0.64 - t * 0.68, 1);
+      const sat = 0.9;
+      const light = THREE.MathUtils.lerp(0.56, 0.63, Math.min(1, radius / maxR));
+      tmpColor.setHSL(hue, sat, light);
 
-        // Smooth the pointer itself
-        const mouseLerp = 1 - Math.exp(-12 * dt);
-        mouseSmoothRef.current.x = THREE.MathUtils.lerp(
-            mouseSmoothRef.current.x,
-            hitRef.current.x,
-            mouseLerp
-        );
-        mouseSmoothRef.current.y = THREE.MathUtils.lerp(
-            mouseSmoothRef.current.y,
-            hitRef.current.y,
-            mouseLerp
-        );
+      colors[i3] = tmpColor.r;
+      colors[i3 + 1] = tmpColor.g;
+      colors[i3 + 2] = tmpColor.b;
+    }
 
-        // Smooth the cluster center to follow mouse across the hero section
-        // (Feels like inertia / antigravity)
-        const centerLerp = 1 - Math.exp(-4.5 * dt); // smaller = more laggy
-        centerRef.current.x = THREE.MathUtils.lerp(
-            centerRef.current.x,
-            mouseSmoothRef.current.x,
-            centerLerp
-        );
-        centerRef.current.y = THREE.MathUtils.lerp(
-            centerRef.current.y,
-            mouseSmoothRef.current.y,
-            centerLerp
-        );
+    return { positions, origins, colors };
+  }, []);
 
-        const mx = mouseSmoothRef.current.x;
-        const my = mouseSmoothRef.current.y;
+  useFrame((state, delta) => {
+    const pts = pointsRef.current;
+    if (!pts) return;
 
-        const cx = centerRef.current.x;
-        const cy = centerRef.current.y;
+    const dt = Math.min(delta, 1 / 60);
 
-        const time = state.clock.getElapsedTime();
-
-        // ===== Feel knobs =====
-        const influenceRadius = 2.3;
-        const influenceRadius2 = influenceRadius * influenceRadius;
-
-        const kReturn = 2.4; // back-to-origin (to moving center)
-        const kMouse = 4.8;  // local mouse repel/swirl
-        const kZ = 3.0;
-
-        const c = 4.0;       // damping
-        const maxSpeed = 1.4;
-
-        const driftAmp = 0.16;
-        const driftFreq = 0.45;
-
-        const posAttr = pts.geometry.attributes.position as THREE.BufferAttribute;
-        const pos = posAttr.array as Float32Array;
-        const velocities = velocitiesRef.current;
-
-        for (let i = 0; i < COUNT; i++) {
-            const i3 = i * 3;
-
-            const px = pos[i3];
-            const py = pos[i3 + 1];
-            const pz = pos[i3 + 2];
-
-            // IMPORTANT: origin is relative; we offset it by the moving center
-            const ox = origins[i3] + cx;
-            const oy = origins[i3 + 1] + cy;
-            const oz = origins[i3 + 2];
-
-            let vx = velocities[i3];
-            let vy = velocities[i3 + 1];
-            let vz = velocities[i3 + 2];
-
-            // Return-to-origin (but origin moves with center)
-            let ax = (ox - px) * kReturn;
-            let ay = (oy - py) * kReturn;
-            const az = (oz - pz) * kZ;
-
-            // Local mouse influence (repel + slight swirl)
-            const dx = px - mx;
-            const dy = py - my;
-            const d2 = dx * dx + dy * dy;
-
-            if (d2 < influenceRadius2) {
-                const d = Math.sqrt(d2) + 1e-6;
-                const t = 1 - d / influenceRadius;
-                const falloff = t * t * (3 - 2 * t);
-
-                const nx = dx / d;
-                const ny = dy / d;
-
-                const repel = kMouse * falloff;
-                const swirl = kMouse * 0.32 * falloff;
-
-                ax += nx * repel + -ny * swirl;
-                ay += ny * repel + nx * swirl;
-            }
-
-            // Ambient drift (super subtle)
-            const phase = i * 0.013;
-            ax += Math.sin(time * driftFreq + phase) * driftAmp;
-            ay += Math.cos(time * driftFreq + phase * 1.6) * driftAmp;
-
-            // Integrate with damping
-            vx += (ax - c * vx) * dt;
-            vy += (ay - c * vy) * dt;
-            vz += (az - c * vz) * dt;
-
-            // Clamp speed
-            const sp = Math.hypot(vx, vy, vz);
-            if (sp > maxSpeed) {
-                const s = maxSpeed / sp;
-                vx *= s;
-                vy *= s;
-                vz *= s;
-            }
-
-            // Integrate position
-            pos[i3] += vx * dt * 60;
-            pos[i3 + 1] += vy * dt * 60;
-            pos[i3 + 2] += vz * dt * 60;
-
-            velocities[i3] = vx;
-            velocities[i3 + 1] = vy;
-            velocities[i3 + 2] = vz;
-        }
-
-        posAttr.needsUpdate = true;
-    });
-
-    return (
-        <points ref={pointsRef} frustumCulled={false}>
-            <bufferGeometry>
-                <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-                <bufferAttribute attach="attributes-color" args={[colors, 3]} />
-            </bufferGeometry>
-
-            <pointsMaterial
-                size={0.09}          // ✅ bigger for visibility
-                transparent
-                opacity={0.95}       // ✅ slightly more visible
-                vertexColors
-                depthWrite={false}
-                sizeAttenuation
-            />
-        </points>
+    const ndcLerp = 1 - Math.exp(-14 * dt);
+    pointerSmoothNdcRef.current.x = THREE.MathUtils.lerp(
+      pointerSmoothNdcRef.current.x,
+      pointerTargetNdcRef.current.x,
+      ndcLerp
     );
+    pointerSmoothNdcRef.current.y = THREE.MathUtils.lerp(
+      pointerSmoothNdcRef.current.y,
+      pointerTargetNdcRef.current.y,
+      ndcLerp
+    );
+
+    raycasterRef.current.setFromCamera(pointerSmoothNdcRef.current, camera);
+    if (raycasterRef.current.ray.intersectPlane(planeRef.current, hitRef.current)) {
+      mouseWorldRef.current.x = hitRef.current.x;
+      mouseWorldRef.current.y = hitRef.current.y;
+    }
+
+    if (!pointerInsideRef.current) {
+      const settle = 1 - Math.exp(-2.2 * dt);
+      mouseWorldRef.current.x = THREE.MathUtils.lerp(mouseWorldRef.current.x, 0, settle);
+      mouseWorldRef.current.y = THREE.MathUtils.lerp(mouseWorldRef.current.y, 0, settle);
+    }
+
+    const centerLerp = 1 - Math.exp(-6.2 * dt);
+    centerRef.current.x = THREE.MathUtils.lerp(centerRef.current.x, mouseWorldRef.current.x, centerLerp);
+    centerRef.current.y = THREE.MathUtils.lerp(centerRef.current.y, mouseWorldRef.current.y, centerLerp);
+
+    const mx = mouseWorldRef.current.x;
+    const my = mouseWorldRef.current.y;
+    const cx = centerRef.current.x;
+    const cy = centerRef.current.y;
+    const time = state.clock.getElapsedTime();
+
+    const influenceRadius = 2.6;
+    const influenceRadius2 = influenceRadius * influenceRadius;
+
+    const kReturn = 2.8;
+    const kMouse = 5.6;
+    const kZ = 2.9;
+    const damping = 4.6;
+    const maxSpeed = 1.65;
+
+    const driftAmp = 0.09;
+    const driftFreq = 0.5;
+
+    const posAttr = pts.geometry.attributes.position as THREE.BufferAttribute;
+    const pos = posAttr.array as Float32Array;
+    const vel = velocitiesRef.current;
+
+    for (let i = 0; i < COUNT; i++) {
+      const i3 = i * 3;
+
+      const px = pos[i3];
+      const py = pos[i3 + 1];
+      const pz = pos[i3 + 2];
+
+      const ox = origins[i3] + cx;
+      const oy = origins[i3 + 1] + cy;
+      const oz = origins[i3 + 2];
+
+      let vx = vel[i3];
+      let vy = vel[i3 + 1];
+      let vz = vel[i3 + 2];
+
+      let ax = (ox - px) * kReturn;
+      let ay = (oy - py) * kReturn;
+      const az = (oz - pz) * kZ;
+
+      const dx = px - mx;
+      const dy = py - my;
+      const d2 = dx * dx + dy * dy;
+
+      if (d2 < influenceRadius2) {
+        const d = Math.sqrt(d2) + 1e-6;
+        const t = 1 - d / influenceRadius;
+        const falloff = t * t * (3 - 2 * t);
+
+        const nx = dx / d;
+        const ny = dy / d;
+
+        const repel = kMouse * falloff;
+        const swirl = kMouse * 0.42 * falloff;
+
+        ax += nx * repel + -ny * swirl;
+        ay += ny * repel + nx * swirl;
+      }
+
+      const phase = i * 0.012;
+      ax += Math.sin(time * driftFreq + phase) * driftAmp;
+      ay += Math.cos(time * driftFreq + phase * 1.5) * driftAmp;
+
+      vx += (ax - damping * vx) * dt;
+      vy += (ay - damping * vy) * dt;
+      vz += (az - damping * vz) * dt;
+
+      const speed = Math.hypot(vx, vy, vz);
+      if (speed > maxSpeed) {
+        const scale = maxSpeed / speed;
+        vx *= scale;
+        vy *= scale;
+        vz *= scale;
+      }
+
+      pos[i3] += vx * dt * 60;
+      pos[i3 + 1] += vy * dt * 60;
+      pos[i3 + 2] += vz * dt * 60;
+
+      vel[i3] = vx;
+      vel[i3 + 1] = vy;
+      vel[i3 + 2] = vz;
+    }
+
+    posAttr.needsUpdate = true;
+  });
+
+  return (
+    <points ref={pointsRef} frustumCulled={false}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.09}
+        transparent
+        opacity={0.95}
+        vertexColors
+        depthWrite={false}
+        sizeAttenuation
+      />
+    </points>
+  );
 }

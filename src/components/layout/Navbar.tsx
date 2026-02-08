@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   BookOpenText,
@@ -8,13 +8,20 @@ import {
   Code2,
   Database,
   FileCode2,
+  Facebook,
   Globe,
+  Instagram,
   Library,
+  Linkedin,
   LifeBuoy,
+  Mail,
+  MapPin,
   Newspaper,
+  Phone,
   ShieldCheck,
   Sparkles,
   Users,
+  Youtube,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -23,6 +30,8 @@ import MegaMenuContent, { type MegaMenuLinkItem } from "@/components/layout/Mega
 import StaggeredMenu from "@/components/layout/StaggeredMenu";
 import { AntigravityLogo } from "@/components/ui/AntigravityLogo";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -30,6 +39,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { Textarea } from "@/components/ui/textarea";
 import type { Language } from "@/lib/use-language";
 import { cn } from "@/lib/utils";
 
@@ -40,11 +50,11 @@ const mobileNavItems = [
   },
   {
     href: "#case-studies",
-    label: { en: "Case Studies", ar: "دراسات الحالة" },
+    label: { en: "Solutions", ar: "الحلول" },
   },
   {
     href: "#about",
-    label: { en: "About", ar: "من نحن" },
+    label: { en: "About MASAR", ar: "عن مسار" },
   },
 ];
 
@@ -65,156 +75,156 @@ type MegaMenuItem = {
 const megaMenuItems: MegaMenuItem[] = [
   {
     key: "products",
-    label: { en: "Products", ar: "المنتجات" },
+    label: { en: "Services", ar: "الخدمات" },
     columns: [
       [
         {
-          title: "Insights",
-          description: "Latest company news, updates, and announcements",
+          title: "Web Development",
+          description: "Fast, modern websites and landing pages built for growth",
           href: "#",
           icon: Newspaper,
         },
         {
-          title: "Culture",
-          description: "Team values, stories, and experiences",
+          title: "Branding & Design",
+          description: "Brand identity systems, visual assets, and creative direction",
           href: "#",
           icon: Users,
         },
         {
-          title: "API",
-          description: "Programmatic access via secure REST endpoints",
+          title: "Basic Web Apps",
+          description: "Practical internal tools and client-facing web applications",
           href: "#",
           icon: Globe,
         },
       ],
       [
         {
-          title: "Engineering",
-          description: "Technical guides, tutorials, and documentation",
+          title: "Hosting",
+          description: "Reliable hosting and deployment for business-critical websites",
           href: "#",
           icon: Code2,
         },
         {
-          title: "Press",
-          description: "Media mentions, interviews, and publications",
+          title: "Technical Support",
+          description: "Ongoing support, updates, and continuous optimization",
           href: "#",
           icon: BriefcaseBusiness,
         },
         {
-          title: "CLI",
-          description: "Command line tools for automation workflows",
+          title: "Launch Packages",
+          description: "Structured packages for startups and expanding businesses",
           href: "#",
           icon: FileCode2,
         },
       ],
     ],
     preview: {
-      title: { en: "Build Faster with Product APIs", ar: "أنجز أسرع مع واجهات المنتج" },
+      title: { en: "Core Services for Modern Business Growth", ar: "خدمات أساسية للنمو الرقمي الحديث" },
       href: "#",
       imageSrc: "/mega/products-preview.svg",
     },
   },
   {
     key: "solutions",
-    label: { en: "Solutions", ar: "الحلول" },
+    label: { en: "Visibility", ar: "الظهور الرقمي" },
     columns: [
       [
         {
-          title: "Commerce",
-          description: "End-to-end digital commerce foundations",
+          title: "SEO",
+          description: "Modern SEO foundations for local and international visibility",
           href: "#",
           icon: Sparkles,
         },
         {
-          title: "Customer Portal",
-          description: "Unified user journeys with personalized experiences",
+          title: "Google Maps (GMR)",
+          description: "Map profile optimization, local authority, and presence signals",
           href: "#",
           icon: Library,
         },
         {
-          title: "Automation",
-          description: "Operational workflows and internal tooling",
+          title: "Citations",
+          description: "Clean and consistent business listings across key platforms",
           href: "#",
           icon: Boxes,
         },
       ],
       [
         {
-          title: "Finance",
-          description: "Reliable payment and reconciliation infrastructure",
+          title: "AI Search Presence",
+          description: "Structured content for AI overviews and next-gen discovery",
           href: "#",
           icon: ShieldCheck,
         },
         {
-          title: "Healthcare",
-          description: "Secure architecture for regulated environments",
+          title: "Reputation Management",
+          description: "Reviews, ratings, and trust signals that improve conversion",
           href: "#",
           icon: LifeBuoy,
         },
         {
-          title: "Enterprise",
-          description: "Scalable systems for large distributed teams",
+          title: "Content Optimization",
+          description: "Practical content strategy aligned with user intent and search",
           href: "#",
           icon: CloudCog,
         },
       ],
     ],
     preview: {
-      title: { en: "Customizable UI Themes and Components", ar: "سمات وواجهات قابلة للتخصيص" },
+      title: { en: "Be Visible in Search and AI Platforms", ar: "كن مرئيا في البحث ومنصات الذكاء الاصطناعي" },
       href: "#",
       imageSrc: "/mega/solutions-preview.svg",
     },
   },
   {
     key: "platform",
-    label: { en: "Platform", ar: "المنصة" },
+    label: { en: "Automation", ar: "الأتمتة" },
     columns: [
       [
         {
-          title: "Hosting",
-          description: "Global infrastructure for scalable web apps",
+          title: "Lead Routing",
+          description: "Route leads automatically to the right team and channel",
           href: "#",
           icon: CloudCog,
         },
         {
-          title: "Auth",
-          description: "Secure authentication and role-based access",
+          title: "Follow-up Workflows",
+          description: "Automated follow-up messages and reminders across channels",
           href: "#",
           icon: ShieldCheck,
         },
         {
-          title: "Database",
-          description: "Reliable, low-latency storage for core data",
+          title: "Reporting Pipelines",
+          description: "Simple dashboards for campaign, lead, and revenue visibility",
           href: "#",
           icon: Database,
         },
       ],
       [
         {
-          title: "Components",
-          description: "Reusable blocks for consistent interfaces",
+          title: "CRM Integrations",
+          description: "Integrate your website and forms with practical CRM workflows",
           href: "#",
           icon: Library,
         },
         {
-          title: "Tokens",
-          description: "Design token system for branding consistency",
+          title: "Operations Automation",
+          description: "Reduce manual tasks with reliable internal automations",
           href: "#",
           icon: Boxes,
         },
         {
-          title: "SDKs",
-          description: "Typed client libraries across major runtimes",
+          title: "Scalable Systems",
+          description: "Future-ready systems built for growth and stability",
           href: "#",
           icon: BookOpenText,
         },
       ],
     ],
     preview: {
-      title: { en: "Explore New Components", ar: "استكشف مكونات جديدة" },
+      title: { en: "Automation that Saves Time and Cost", ar: "أتمتة عملية توفر الوقت والتكلفة" },
       href: "#",
       imageSrc: "/mega/platform-preview.svg",
-      badge: { en: "New", ar: "جديد" },
+      badge: { en: "AI-First", ar: "مدعوم بالذكاء الاصطناعي" },
     },
   },
   {
@@ -223,47 +233,47 @@ const megaMenuItems: MegaMenuItem[] = [
     columns: [
       [
         {
-          title: "Guides",
-          description: "Step-by-step playbooks for modern teams",
+          title: "Our Story",
+          description: "Why MASAR exists and how we approach digital infrastructure",
           href: "#",
           icon: BookOpenText,
         },
         {
-          title: "Case Studies",
-          description: "How teams ship measurable outcomes",
+          title: "Case Use Scenarios",
+          description: "Practical examples for Syrian businesses and new investors",
           href: "#",
           icon: BriefcaseBusiness,
         },
         {
-          title: "Documentation",
-          description: "Reference material for APIs and tooling",
+          title: "Service Scope",
+          description: "Clear service scope, deliverables, and implementation paths",
           href: "#",
           icon: FileCode2,
         },
       ],
       [
         {
-          title: "Changelog",
-          description: "Product releases and lifecycle updates",
+          title: "Methodology",
+          description: "Modern methods updated with changes in search and AI systems",
           href: "#",
           icon: Newspaper,
         },
         {
-          title: "Community",
-          description: "Join discussions and share best practices",
+          title: "FAQ",
+          description: "Simple answers about timelines, pricing, and collaboration",
           href: "#",
           icon: Users,
         },
         {
-          title: "Support",
-          description: "Help center and onboarding assistance",
+          title: "Contact",
+          description: "Talk to MASAR and plan your next digital growth phase",
           href: "#",
           icon: LifeBuoy,
         },
       ],
     ],
     preview: {
-      title: { en: "Learn Faster with Expert Playbooks", ar: "تعلم أسرع مع أدلة الخبراء" },
+      title: { en: "Modern, Practical, Future-Ready", ar: "حلول حديثة وعملية وجاهزة للمستقبل" },
       href: "#",
       imageSrc: "/mega/resources-preview.svg",
     },
@@ -289,6 +299,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
     () => ({
       language: language === "ar" ? "EN" : "AR",
       menu: language === "ar" ? "القائمة" : "Menu",
+      contact: language === "ar" ? "تواصل معنا" : "Contact Us",
       close: language === "ar" ? "إغلاق" : "Close",
       home: language === "ar" ? "الرئيسية" : "Home",
     }),
@@ -412,7 +423,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
           className={cn("flex items-center gap-3 text-[#161611]", isRTL && "flex-row-reverse")}
         >
           <AntigravityLogo className="size-5" />
-          <span className={cn("text-[1.8rem] font-semibold tracking-tight", isRTL && "arabic-text")}>OUJ</span>
+          <span className={cn("text-[1.8rem] font-semibold tracking-tight", isRTL && "arabic-text")}>MASAR</span>
         </Link>
 
         <NavigationMenu
@@ -432,6 +443,8 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                 }}
               >
                 <NavigationMenuTrigger
+                  id={`main-nav-trigger-${item.key}`}
+                  aria-controls={`main-nav-content-${item.key}`}
                   data-mega-menu-trigger={item.key}
                   onClick={(event) => {
                     event.preventDefault();
@@ -440,12 +453,13 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                   }}
                   className={cn(
                     "h-10 rounded-md bg-transparent px-4 text-[0.96rem] font-medium text-[#5D5D54] hover:bg-[#ECEAE5] hover:text-[#1C1C16] data-[state=open]:bg-[#ECEAE5] data-[state=open]:text-[#1C1C16]",
-                    isRTL && "arabic-text"
+                    isRTL ? "arabic-text" : "uppercase tracking-[0.04em]"
                   )}
                 >
                   {item.label[language]}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent
+                  id={`main-nav-content-${item.key}`}
                   onMouseEnter={clearCloseTimeout}
                   onMouseLeave={scheduleClose}
                   className="md:!fixed md:!left-1/2 md:!right-auto md:!mt-0 md:!w-[min(1120px,calc(100vw-2rem))] md:!max-w-none md:!-translate-x-1/2 !overflow-visible !rounded-2xl !border !border-black/10 bg-[#F8F8F6] !p-0 shadow-[0_22px_40px_rgba(12,12,11,0.08)]"
@@ -487,47 +501,139 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
 
           <span className="hidden h-5 w-px bg-black/15 md:block" aria-hidden="true" />
 
-          <StaggeredMenu
-          position={isRTL ? "left" : "right"}
-          items={menuItems}
-          menuLabel={labels.menu}
-          closeLabel={labels.close}
-          accentColor="#4ED1B2"
-          triggerIconColor="#FF5B4A"
-          colors={["#E6D8B8", "#4ED1B2"]}
-          displayItemNumbering
-          buttonClassName={cn(
-            "px-0 py-0 text-sm font-bold tracking-[0.16em] text-[#101010] hover:bg-transparent",
-            isRTL && "arabic-text tracking-normal"
-          )}
-          isRTL={isRTL}
-          footer={
-            <div className="mt-auto flex flex-col gap-4 pt-8">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onToggleLanguage}
-                className={cn(
-                  "h-auto border-[#0F1F1E]/10 py-4 text-sm font-bold text-[#0F1F1E]",
-                  isRTL ? "arabic-text" : "uppercase tracking-widest"
-                )}
-              >
-                {labels.language}
-              </Button>
-              <Button
-                asChild
-                className={cn(
-                  "h-auto bg-[#0F1F1E] py-4 text-sm font-bold text-white",
-                  isRTL ? "arabic-text" : "uppercase tracking-widest"
-                )}
-              >
-                <Link href="#contact">{language === "ar" ? "تواصل معنا" : "Contact Us"}</Link>
-              </Button>
-            </div>
-          }
+                    <StaggeredMenu
+            position={isRTL ? "left" : "right"}
+            items={menuItems}
+            menuLabel={labels.contact}
+            closeLabel={labels.close}
+            accentColor="#4ED1B2"
+            triggerIconColor="currentColor"
+            colors={["#E6D8B8", "#4ED1B2"]}
+            buttonClassName={cn(
+              "h-10 rounded-md bg-transparent px-4 text-[0.96rem] font-medium text-[#5D5D54] hover:bg-[#ECEAE5] hover:text-[#1C1C16]",
+              isRTL ? "arabic-text tracking-normal" : "uppercase tracking-[0.04em]"
+            )}
+            isRTL={isRTL}
+            customContent={
+              <div className="flex flex-col gap-6">
+                <div className="space-y-2">
+                  <h3 className={cn("text-3xl font-semibold tracking-tight text-[#0F1F1E]", isRTL && "arabic-text")}>
+                    {language === "ar" ? "لنبن حضورك الرقمي الحديث" : "Build Your Modern Digital Presence"}
+                  </h3>
+                  <p className={cn("text-sm text-[#0F1F1E]/65", isRTL && "arabic-text")}>
+                    {language === "ar"
+                      ? "شاركنا أهدافك وسنقترح لك نظاما عمليا للتسويق والأتمتة خلال 24 ساعة."
+                      : "Share your goals and we will propose a practical marketing and automation roadmap within 24 hours."}
+                  </p>
+                </div>
+
+                <div className="grid gap-3 text-sm text-[#0F1F1E]">
+                  <a href="mailto:hello@masarmarketing.com" className="inline-flex items-center gap-2 hover:text-[#22C7AC]">
+                    <Mail className="size-4" />
+                    <span>hello@masarmarketing.com</span>
+                  </a>
+                  <a href="tel:+963000000000" className="inline-flex items-center gap-2 hover:text-[#22C7AC]">
+                    <Phone className="size-4" />
+                    <span>+963 000 000 000</span>
+                  </a>
+                  <p className="inline-flex items-center gap-2">
+                    <MapPin className="size-4" />
+                    <span>{language === "ar" ? "دمشق، سوريا" : "Damascus, Syria"}</span>
+                  </p>
+                </div>
+
+                <div className={cn("flex flex-wrap items-center gap-2", isRTL && "justify-end")}>
+                  {[
+                    { label: "Instagram", href: "https://instagram.com", icon: Instagram },
+                    { label: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
+                    { label: "Facebook", href: "https://facebook.com", icon: Facebook },
+                    { label: "YouTube", href: "https://youtube.com", icon: Youtube },
+                  ].map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={social.label}
+                      className="inline-flex size-10 items-center justify-center rounded-full border border-[#0F1F1E]/10 bg-white/60 text-[#0F1F1E]/75 transition-colors hover:border-[#4ED1B2] hover:text-[#22C7AC]"
+                    >
+                      <social.icon className="size-4" />
+                    </a>
+                  ))}
+                </div>
+
+                <form id="contact-drawer-form" className="space-y-3" onSubmit={(event) => event.preventDefault()}>
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="contact-name"
+                      className={cn("text-xs font-semibold uppercase tracking-[0.14em]", isRTL && "arabic-text tracking-normal")}
+                    >
+                      {language === "ar" ? "الاسم" : "Name"}
+                    </Label>
+                    <Input
+                      id="contact-name"
+                      name="name"
+                      placeholder={language === "ar" ? "اسمك الكامل" : "Your full name"}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="contact-email"
+                      className={cn("text-xs font-semibold uppercase tracking-[0.14em]", isRTL && "arabic-text tracking-normal")}
+                    >
+                      {language === "ar" ? "البريد الإلكتروني" : "Email"}
+                    </Label>
+                    <Input id="contact-email" name="email" type="email" placeholder="name@company.com" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="contact-message"
+                      className={cn("text-xs font-semibold uppercase tracking-[0.14em]", isRTL && "arabic-text tracking-normal")}
+                    >
+                      {language === "ar" ? "الرسالة" : "Message"}
+                    </Label>
+                    <Textarea
+                      id="contact-message"
+                      name="message"
+                      placeholder={language === "ar" ? "أخبرنا عن مشروعك..." : "Tell us about your project..."}
+                      className="min-h-28 resize-none"
+                    />
+                  </div>
+                </form>
+              </div>
+            }
+            footer={
+              <div className="mt-auto flex flex-col gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="brand-outline"
+                  onClick={onToggleLanguage}
+                  className={cn(
+                    "h-12 px-7 text-sm",
+                    isRTL ? "arabic-text" : "uppercase tracking-widest"
+                  )}
+                >
+                  {labels.language}
+                </Button>
+                <Button
+                  type="submit"
+                  form="contact-drawer-form"
+                  variant="brand-fill"
+                  className={cn(
+                    "h-12 px-7 text-sm",
+                    isRTL ? "arabic-text" : "uppercase tracking-widest"
+                  )}
+                >
+                  {language === "ar" ? "إرسال الطلب" : "Send Request"}
+                </Button>
+              </div>
+            }
           />
         </div>
       </nav>
     </header>
   );
 }
+
