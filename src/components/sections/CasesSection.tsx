@@ -109,7 +109,7 @@ export default function CasesSection({ language }: { language: Language }) {
     <section
       id="case-studies"
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative z-20 bg-[#F6F7F7] px-6 py-28 text-[#0F1F1E]"
+      className="relative z-20 bg-white px-6 py-28 text-[#0F1F1E] dark:bg-[#070D0C] dark:text-[#EAF2EE]"
     >
       <div className="mx-auto max-w-7xl space-y-12">
         <motion.div
@@ -137,12 +137,12 @@ export default function CasesSection({ language }: { language: Language }) {
             >
               {copy.heading[language]}
             </h2>
-            <p className={cn("max-w-[60ch] text-[1.05rem] leading-8 text-[#4A5754]", isRTL && "arabic-text")}>
+            <p className={cn("max-w-[60ch] text-[1.05rem] leading-8 text-[#4A5754] dark:text-[#A9B9B4]", isRTL && "arabic-text")}>
               {copy.description[language]}
             </p>
             <Button
               asChild
-              variant="brand-fill"
+              variant="light-solid"
               className={cn("h-11 px-6 text-xs", isRTL ? "arabic-text tracking-normal" : "tracking-[0.16em]")}
             >
               <a href="#contact">
@@ -151,15 +151,15 @@ export default function CasesSection({ language }: { language: Language }) {
             </Button>
           </div>
 
-          <div className="relative overflow-hidden rounded-[30px] border border-[#0F1F1E]/10 bg-[#0F1F1E] p-6 text-[#F6F7F7] shadow-[0_22px_42px_rgba(7,16,15,0.24)]">
-            <div className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full bg-[#4ED1B2]/20 blur-2xl" />
-            <p className={cn("text-xs font-medium text-[#E6D8B8]", isRTL ? "arabic-text" : "uppercase tracking-[0.2em]")}>
+          <div className="relative overflow-hidden rounded-2xl border border-[#0F1F1E]/10 bg-[#F8F9F8] p-6 text-[#0F1F1E] shadow-[0_14px_30px_rgba(7,16,15,0.08)] dark:border-white/15 dark:bg-[#0F1716] dark:text-[#EAF2EE]">
+            <div className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full bg-[#4ED1B2]/12 blur-2xl" />
+            <p className={cn("text-xs font-medium text-[#1E4F45] dark:text-[#8ED9C8]", isRTL ? "arabic-text" : "uppercase tracking-[0.2em]")}>
               {copy.frameTitle[language]}
             </p>
-            <p className={cn("mt-4 text-base leading-8 text-white/80", isRTL && "arabic-text")}>{copy.frameBody[language]}</p>
+            <p className={cn("mt-4 text-base leading-8 text-[#2D3B38] dark:text-[#B3C3BE]", isRTL && "arabic-text")}>{copy.frameBody[language]}</p>
             <ul className="mt-6 space-y-2.5">
               {copy.framePoints[language].map((point) => (
-                <li key={point} className={cn("flex items-start gap-2.5 text-sm text-white/88", isRTL && "flex-row-reverse arabic-text")}>
+                <li key={point} className={cn("flex items-start gap-2.5 text-sm text-[#344643] dark:text-[#C2D0CB]", isRTL && "flex-row-reverse arabic-text")}>
                   <span className="mt-2 size-1.5 shrink-0 rounded-full bg-[#4ED1B2]" aria-hidden="true" />
                   <span>{point}</span>
                 </li>
@@ -180,7 +180,7 @@ export default function CasesSection({ language }: { language: Language }) {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.48, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Card className="h-full rounded-[30px] border-[#0F1F1E]/10 bg-white/90 py-0 shadow-[0_16px_30px_rgba(9,20,18,0.08)]">
+                <Card className="h-full rounded-2xl border-[#0F1F1E]/10 bg-white/90 py-0 shadow-[0_16px_30px_rgba(9,20,18,0.08)]">
                   <CardContent className={cn("flex h-full flex-col gap-5 p-6", isRTL && "text-right")}>
                     <div className={cn("flex items-center justify-between gap-3", isRTL && "flex-row-reverse")}>
                       <Badge

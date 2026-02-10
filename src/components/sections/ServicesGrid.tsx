@@ -2,10 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Language } from "@/lib/use-language";
 import { cn } from "@/lib/utils";
@@ -60,26 +57,26 @@ export default function ServicesGrid({ language }: { language: Language }) {
   });
   const horizontalX = useTransform(
     scrollYProgress,
-    [0.07, 0.62],
+    [0.3, 0.82],
     [trackBounds.start, trackBounds.end]
   );
-  const trackOpacity = useTransform(scrollYProgress, [0.07, 0.62, 0.66], [1, 1, 0]);
-  const trackY = useTransform(scrollYProgress, [0.62, 0.66], [0, 24]);
+  const trackOpacity = useTransform(scrollYProgress, [0, 0.22, 0.3, 0.82, 0.9, 1], [0, 0, 1, 1, 0, 0]);
+  const trackY = useTransform(scrollYProgress, [0.22, 0.3, 0.82, 0.9], [24, 0, 0, 24]);
   const headlineOpacity = useTransform(
     scrollYProgress,
-    [0, 0.12, 0.24, 0.56, 0.64, 0.72, 0.8],
-    [1, 0.08, 0.35, 1, 1, 0.35, 0]
+    [0, 0.08, 0.22, 0.3, 0.82, 0.9, 1],
+    [0.55, 1, 1, 0, 0, 1, 1]
   );
   const headlineScale = useTransform(
     scrollYProgress,
-    [0, 0.12, 0.24, 0.56, 0.64, 0.8],
-    [1, 0.84, 0.88, 1, 1, 0.94]
+    [0, 0.08, 0.22, 0.3, 0.82, 0.9, 1],
+    [0.97, 1, 1, 0.98, 0.98, 1, 1]
   );
-  const headlineY = useTransform(scrollYProgress, [0.72, 0.8], [0, -80]);
-  const headlineGlow = useTransform(scrollYProgress, [0.46, 0.7], [0, 1]);
+  const headlineY = useTransform(scrollYProgress, [0, 0.08, 0.22, 0.3, 0.82, 0.9, 1], [20, 0, 0, -36, -36, 0, 0]);
+  const headlineGlow = useTransform(scrollYProgress, [0.08, 0.22, 0.9, 1], [0.3, 1, 0.6, 0.6]);
   const headlineTextShadow = useTransform(
     headlineGlow,
-    (value) => `0 0 ${value * 24}px rgba(255,255,255,0.08)`
+    (value) => `0 0 ${value * 24}px rgba(15,31,30,0.12)`
   );
 
   useLayoutEffect(() => {
@@ -87,7 +84,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
       if (!stickyRef.current || !trackRef.current) return;
       const viewportWidth = stickyRef.current.clientWidth;
       const trackWidth = trackRef.current.scrollWidth;
-      const overshoot = 80;
+      const overshoot = 220;
       const start = isRTL ? -trackWidth - overshoot : viewportWidth + overshoot;
       const end = isRTL ? viewportWidth + overshoot : -trackWidth - overshoot;
       setTrackBounds({ start, end });
@@ -103,7 +100,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
       id="services"
       ref={sectionRef}
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative h-[240vh] bg-[#0A0A0A] text-white"
+      className="relative h-[560vh] bg-white text-[#0F1F1E] dark:bg-[#070D0C] dark:text-[#EAF2EE]"
     >
       <div
         ref={stickyRef}
@@ -117,32 +114,32 @@ export default function ServicesGrid({ language }: { language: Language }) {
                 opacity: headlineOpacity,
                 y: headlineY,
               }}
-              className={cn("text-center", isRTL && "text-right")}
+              className={cn("relative z-10 text-center", isRTL && "text-right")}
             >
               <p
                 className={cn(
-                  "text-xs font-semibold text-white/40",
+                  "text-xs font-semibold text-[#5A6B66] dark:text-[#9FB1AB]",
                   isRTL ? "arabic-text" : "uppercase tracking-[0.35em]"
                 )}
               >
                 {isRTL ? "خدماتنا الأساسية" : "Core Services"}
               </p>
-              <h2
+              <motion.h2
                 className={cn(
-                  "mt-4 text-4xl font-semibold tracking-tight text-white/70 sm:text-5xl lg:text-6xl",
+                  "mt-4 text-4xl font-semibold tracking-tight text-[#0F1F1E]/85 dark:text-[#EAF2EE]/90 sm:text-5xl lg:text-6xl",
                   isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
                 )}
                 style={{ textShadow: headlineTextShadow }}
               >
                 {isRTL ? "نبني بنية رقمية حديثة قابلة للنمو" : "WE BUILD MODERN DIGITAL INFRASTRUCTURE"}
-              </h2>
+              </motion.h2>
             </motion.div>
           </div>
 
           <motion.div
             ref={trackRef}
             style={{ x: horizontalX, opacity: trackOpacity, y: trackY }}
-            className="absolute left-0 top-[52%] flex w-max -translate-y-1/2 items-center gap-6"
+            className="absolute left-0 top-[52%] z-20 flex w-max -translate-y-1/2 items-center gap-6"
           >
             {services.map((service) => (
               <motion.div
@@ -150,54 +147,46 @@ export default function ServicesGrid({ language }: { language: Language }) {
                 whileHover={{ y: -20, scale: 1.02 }}
                 className="group"
               >
-                <Card className="relative w-[280px] aspect-[9/16] overflow-hidden rounded-[40px] border-0 bg-transparent p-0 text-white shadow-[0_22px_55px_rgba(15,31,30,0.2)] sm:w-[300px] lg:w-[320px]">
+                <Card className="relative w-[280px] aspect-[9/16] overflow-hidden rounded-2xl border-0 bg-transparent p-0 text-white shadow-[0_22px_55px_rgba(15,31,30,0.2)] sm:w-[300px] lg:w-[320px]">
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                     style={{ backgroundImage: `url(${service.image})` }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                  <Badge
-                    variant="brand-outline"
-                    className={cn(
-                      "absolute top-5 rounded-full px-3.5 py-1.5 text-[10px] shadow-[0_12px_20px_rgba(6,18,25,0.3)]",
-                      isRTL ? "right-5 arabic-text tracking-normal" : "left-5 tracking-[0.24em]"
-                    )}
-                  >
-                    {service.category[language]}
-                  </Badge>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/22 to-transparent" />
                   <CardContent
                     className={cn(
-                      "absolute bottom-5 left-5 right-5 rounded-2xl border border-white/25 bg-white/15 p-4 text-white backdrop-blur-md",
+                      "absolute inset-x-0 bottom-0 p-0 text-white",
                       isRTL && "text-right"
                     )}
                   >
-                    <p
-                      className={cn(
-                        "text-lg font-semibold",
-                        isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
-                      )}
-                    >
-                      {service.title[language]}
-                    </p>
+                    <div className="bg-gradient-to-t from-[#060A09]/92 via-[#060A09]/52 to-transparent px-5 pb-5 pt-12">
+                      <p
+                        className={cn(
+                          "text-[0.63rem] font-semibold text-[#8FE8D2]/95",
+                          isRTL ? "arabic-text tracking-normal" : "uppercase tracking-[0.24em]"
+                        )}
+                      >
+                        {service.category[language]}
+                      </p>
+                      <p
+                        className={cn(
+                          "mt-2 text-[1.55rem] font-semibold leading-[1.1] text-white",
+                          isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
+                        )}
+                      >
+                        {service.title[language]}
+                      </p>
+                      <span
+                        className={cn(
+                          "mt-3 block h-px w-16 bg-gradient-to-r from-[#6AEACB] to-transparent",
+                          isRTL && "mr-auto"
+                        )}
+                      />
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
             ))}
-
-            <Button
-              type="button"
-              variant="brand-outline"
-              className={cn(
-                "group h-12 min-w-[210px] justify-start border-white/60 bg-[#0A0A0A]/35 text-white backdrop-blur-sm before:bg-[#4ED1B2]/28 hover:bg-[#0A0A0A]/55",
-                "[&_svg]:text-white",
-                isRTL ? "arabic-text" : "uppercase tracking-[0.3em]"
-              )}
-            >
-              <span className="inline-flex items-center gap-3">
-                {isRTL ? "عرض كل الخدمات" : "View All Services"}
-                <span className="inline-flex size-8 items-center justify-center rounded-full border border-white/70 bg-white/15 transition-colors duration-200 group-hover:border-[#E6D8B8] group-hover:bg-[#E6D8B8]/28"><ArrowRight className={cn("size-4 text-white", isRTL && "rotate-180")} /></span>
-              </span>
-            </Button>
           </motion.div>
         </div>
       </div>

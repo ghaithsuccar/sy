@@ -22,7 +22,7 @@ export default function AboutUs({ language }: { language: Language }) {
       id="about"
       ref={sectionRef}
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative z-20 -mt-[55vh] flex h-screen items-center justify-center bg-[#0A0A0A] px-6 text-white"
+      className="relative z-20 -mt-[55vh] flex h-screen items-center justify-center bg-white px-6 text-[#0F1F1E] dark:bg-[#070D0C] dark:text-[#EAF2EE]"
     >
       <motion.div
         style={{ y: headingY, opacity: headingOpacity, scale: headingScale }}

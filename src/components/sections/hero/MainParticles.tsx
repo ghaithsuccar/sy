@@ -2,10 +2,13 @@
 
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
+import { useTheme } from "next-themes";
 import * as THREE from "three";
 
 export function MainParticles() {
-  const COUNT = 2400;
+  const COUNT = 520;
+  const { resolvedTheme } = useTheme();
+  const isLightTheme = resolvedTheme !== "dark";
 
   const pointsRef = useRef<THREE.Points>(null);
   const velocitiesRef = useRef<Float32Array>(new Float32Array(COUNT * 3));
@@ -84,7 +87,7 @@ export function MainParticles() {
     const tmpColor = new THREE.Color();
 
     const minR = 0.35;
-    const maxR = 9.2;
+    const maxR = 6.2;
 
     for (let i = 0; i < COUNT; i++) {
       const i3 = i * 3;
@@ -96,10 +99,10 @@ export function MainParticles() {
       const r5 = rand01(i, 5);
 
       const angle = r1 * Math.PI * 2;
-      const radius = minR + (r2 ** 0.72) * (maxR - minR);
+      const radius = minR + (r2 ** 0.58) * (maxR - minR);
 
-      const x = Math.cos(angle) * radius * 1.02 + (r3 - 0.5) * 0.28;
-      const y = Math.sin(angle) * radius * 0.92 + (r4 - 0.5) * 0.28;
+      const x = Math.cos(angle) * radius + (r3 - 0.5) * 0.14;
+      const y = Math.sin(angle) * radius + (r4 - 0.5) * 0.14;
       const z = (r5 - 0.5) * 0.6;
 
       positions[i3] = x;
@@ -111,9 +114,11 @@ export function MainParticles() {
       origins[i3 + 2] = z;
 
       const t = angle / (Math.PI * 2);
-      const hue = THREE.MathUtils.euclideanModulo(0.64 - t * 0.68, 1);
-      const sat = 0.9;
-      const light = THREE.MathUtils.lerp(0.56, 0.63, Math.min(1, radius / maxR));
+      const hue = THREE.MathUtils.euclideanModulo(0.74 - t * 0.98 + r3 * 0.08, 1);
+      const sat = 1;
+      const light = isLightTheme
+        ? THREE.MathUtils.lerp(0.42, 0.62, Math.min(1, radius / maxR))
+        : THREE.MathUtils.lerp(0.66, 0.8, Math.min(1, radius / maxR));
       tmpColor.setHSL(hue, sat, light);
 
       colors[i3] = tmpColor.r;
@@ -122,7 +127,7 @@ export function MainParticles() {
     }
 
     return { positions, origins, colors };
-  }, []);
+  }, [isLightTheme]);
 
   useFrame((state, delta) => {
     const pts = pointsRef.current;
@@ -164,7 +169,7 @@ export function MainParticles() {
     const cy = centerRef.current.y;
     const time = state.clock.getElapsedTime();
 
-    const influenceRadius = 2.6;
+    const influenceRadius = 1.7;
     const influenceRadius2 = influenceRadius * influenceRadius;
 
     const kReturn = 2.8;
@@ -255,10 +260,11 @@ export function MainParticles() {
       <pointsMaterial
         size={0.09}
         transparent
-        opacity={0.95}
+        opacity={0.86}
         vertexColors
         depthWrite={false}
         sizeAttenuation
+        toneMapped={false}
       />
     </points>
   );

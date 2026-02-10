@@ -38,6 +38,9 @@ type StaggeredMenuProps = {
   triggerIconColor?: string;
 };
 
+const EASE_OUT_EXPO: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const EASE_STANDARD: [number, number, number, number] = [0.4, 0, 0.2, 1];
+
 export default function StaggeredMenu({
   position = "right",
   items,
@@ -163,12 +166,12 @@ export default function StaggeredMenu({
       visible: {
         x: 0,
         opacity: 1,
-        transition: { duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: prefersReducedMotion ? 0 : 0.45, ease: EASE_OUT_EXPO },
       },
       exit: {
         x: `${side * 110}%`,
         opacity: 0,
-        transition: { duration: prefersReducedMotion ? 0 : 0.3, ease: [0.4, 0, 0.2, 1] },
+        transition: { duration: prefersReducedMotion ? 0 : 0.3, ease: EASE_STANDARD },
       },
     }),
     [prefersReducedMotion, side]
@@ -181,12 +184,12 @@ export default function StaggeredMenu({
         x: 0,
         transition: {
           duration: prefersReducedMotion ? 0 : 0.5 + index * 0.08,
-          ease: [0.22, 1, 0.36, 1],
+          ease: EASE_OUT_EXPO,
         },
       },
       exit: {
         x: `${side * (120 + index * 10)}%`,
-        transition: { duration: prefersReducedMotion ? 0 : 0.3, ease: [0.4, 0, 0.2, 1] },
+        transition: { duration: prefersReducedMotion ? 0 : 0.3, ease: EASE_STANDARD },
       },
     }),
     [prefersReducedMotion, side]
@@ -209,7 +212,7 @@ export default function StaggeredMenu({
       visible: {
         opacity: 1,
         x: 0,
-        transition: { duration: prefersReducedMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: prefersReducedMotion ? 0 : 0.35, ease: EASE_OUT_EXPO },
       },
     }),
     [prefersReducedMotion, side]
@@ -321,7 +324,8 @@ export default function StaggeredMenu({
                     dir={isRTL ? "rtl" : "ltr"}
                     tabIndex={-1}
                     className={cn(
-                      "relative z-10 flex h-dvh w-full flex-col gap-6 overflow-y-auto bg-white/95 px-6 pb-8 pt-24 text-[#0F1F1E] shadow-2xl backdrop-blur-xl",
+                      "relative z-10 flex h-dvh w-full flex-col gap-6 overflow-y-auto border border-black/10 bg-white/95 px-6 pb-8 pt-24 text-[#0F1F1E] shadow-[0_24px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl dark:border-[#8EE8D2]/35 dark:bg-[#0E1715]/96 dark:text-[#EAF2EE] dark:shadow-[0_28px_80px_rgba(0,0,0,0.72),0_0_0_1px_rgba(142,232,210,0.24)] before:pointer-events-none before:absolute before:inset-y-0 before:w-px before:bg-gradient-to-b before:from-transparent before:via-white/45 before:to-transparent dark:before:via-[#BDFCEB]/75",
+                      position === "right" ? "before:left-0" : "before:right-0",
                       isRTL &&
                         "arabic-text text-right [letter-spacing:normal] [text-transform:none] [font-variant:normal] [font-feature-settings:normal]"
                     )}
@@ -334,7 +338,7 @@ export default function StaggeredMenu({
                       <p
                         id={panelTitleId}
                         className={cn(
-                          "text-xs font-bold text-[#0F1F1E]/45",
+                          "text-xs font-bold text-[#0F1F1E]/45 dark:text-[#D2E4DE]/70",
                           isRTL ? "arabic-text" : "uppercase tracking-[0.25em]"
                         )}
                       >
@@ -345,7 +349,7 @@ export default function StaggeredMenu({
                         onClick={handleClose}
                         aria-label={closeLabel}
                         className={cn(
-                          "inline-flex items-center rounded-full border border-[#0F1F1E]/20 px-3 py-1 text-xs font-semibold text-[#0F1F1E] transition-colors hover:bg-[#0F1F1E]/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F1F1E]/40",
+                          "inline-flex items-center rounded-full border border-[#0F1F1E]/20 px-3 py-1 text-xs font-semibold text-[#0F1F1E] transition-colors hover:bg-[#0F1F1E]/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F1F1E]/40 dark:border-white/35 dark:text-[#EAF2EE] dark:hover:bg-white/10 dark:focus-visible:outline-white/45",
                           isRTL ? "arabic-text" : "uppercase tracking-[0.2em]"
                         )}
                       >
@@ -376,7 +380,7 @@ export default function StaggeredMenu({
                                 aria-label={item.ariaLabel ?? item.label}
                                 onClick={handleClose}
                                 className={cn(
-                                  "group flex items-baseline gap-4 text-[clamp(2.2rem,4vw,3.4rem)] font-semibold leading-none tracking-tight text-[#0F1F1E] transition-colors hover:text-[var(--sm-accent)]",
+                                  "group flex items-baseline gap-4 text-[clamp(2.2rem,4vw,3.4rem)] font-semibold leading-none tracking-tight text-[#0F1F1E] transition-colors hover:text-[var(--sm-accent)] dark:text-[#EAF2EE]",
                                   isRTL ? "arabic-text" : "uppercase"
                                 )}
                                 style={accentStyle}
@@ -408,7 +412,7 @@ export default function StaggeredMenu({
                                 <Link
                                   key={social.href}
                                   href={social.href}
-                                  className="text-base font-medium text-[#0F1F1E] transition-colors hover:text-[var(--sm-accent)]"
+                                  className="text-base font-medium text-[#0F1F1E] transition-colors hover:text-[var(--sm-accent)] dark:text-[#EAF2EE]"
                                   style={accentStyle}
                                 >
                                   {social.label}

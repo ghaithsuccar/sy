@@ -60,19 +60,20 @@ export default function MegaMenuContent({
                       href={item.href}
                       onClick={onItemSelect}
                       className={cn(
-                        "group rounded-xl p-3 transition-colors hover:bg-white/80 focus-visible:ring-2 focus-visible:ring-[#0F1F1E]/15",
+                        "group rounded-xl p-3 transition-colors hover:bg-white/80 focus-visible:ring-2 focus-visible:ring-[#0F1F1E]/15 dark:hover:bg-white/8 dark:focus-visible:ring-white/20",
                         isRTL && "arabic-text"
                       )}
                     >
                       <div className={cn("flex items-start gap-3", isRTL && "flex-row-reverse")}>
-                        <span className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-black/10 bg-white text-[#0F1F1E] shadow-sm">
-                          <Icon className="size-4" aria-hidden="true" />
-                        </span>
+                        <Icon
+                          className="mt-0.5 size-[1.15rem] shrink-0 text-[#2F6F5E] [stroke-width:1.9] transition-colors duration-200 group-hover:text-[#1E8C73] dark:text-[#63DCC1] dark:group-hover:text-[#94F4E0]"
+                          aria-hidden="true"
+                        />
                         <span className="space-y-1">
-                          <span className="block text-[1.05rem] font-medium leading-tight text-[#20201A]">
+                          <span className="block text-[1.05rem] font-medium leading-tight text-[#20201A] dark:text-[#EEF7F3]">
                             {item.title}
                           </span>
-                          <span className="block text-sm leading-6 text-[#6F6F66]">{item.description}</span>
+                          <span className="block text-sm leading-6 text-[#6F6F66] dark:text-[#A9B9B4]">{item.description}</span>
                         </span>
                       </div>
                     </Link>
@@ -89,7 +90,7 @@ export default function MegaMenuContent({
           href={preview.href}
           onClick={onItemSelect}
           className={cn(
-            "relative flex min-h-[260px] overflow-hidden rounded-xl border border-black/5 bg-[#ded8ca] p-4 md:min-h-[300px]",
+            "relative flex min-h-[260px] overflow-hidden rounded-xl border border-black/5 bg-[#ded8ca] p-4 md:min-h-[300px] dark:border-white/15 dark:bg-[#1B2624]",
             isRTL && "order-first md:order-none"
           )}
         >
@@ -106,7 +107,7 @@ export default function MegaMenuContent({
             className="object-cover"
             priority={false}
           />
-          <div className="relative z-10 mt-auto w-full rounded-lg bg-black/20 p-3 text-white backdrop-blur-[2px]">
+          <div className="relative z-10 mt-auto w-full rounded-lg bg-black/20 p-3 text-white backdrop-blur-[2px] dark:bg-black/35">
             <p className={cn("text-xl font-semibold leading-tight", isRTL && "arabic-text text-right")}>
               {preview.title}
             </p>

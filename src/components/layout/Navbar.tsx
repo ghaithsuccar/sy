@@ -11,20 +11,22 @@ import {
   Facebook,
   Globe,
   Instagram,
-  Library,
   Linkedin,
   LifeBuoy,
   Mail,
   MapPin,
+  Moon,
   Newspaper,
   Phone,
   ShieldCheck,
   Sparkles,
+  Sun,
   Users,
   Youtube,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 
 import MegaMenuContent, { type MegaMenuLinkItem } from "@/components/layout/MegaMenuContent";
 import StaggeredMenu from "@/components/layout/StaggeredMenu";
@@ -82,19 +84,19 @@ const megaMenuItems: MegaMenuItem[] = [
           title: "Web Development",
           description: "Fast, modern websites and landing pages built for growth",
           href: "#",
-          icon: Newspaper,
+          icon: Code2,
         },
         {
           title: "Branding & Design",
           description: "Brand identity systems, visual assets, and creative direction",
           href: "#",
-          icon: Users,
+          icon: Sparkles,
         },
         {
           title: "Basic Web Apps",
           description: "Practical internal tools and client-facing web applications",
           href: "#",
-          icon: Globe,
+          icon: Boxes,
         },
       ],
       [
@@ -102,19 +104,19 @@ const megaMenuItems: MegaMenuItem[] = [
           title: "Hosting",
           description: "Reliable hosting and deployment for business-critical websites",
           href: "#",
-          icon: Code2,
+          icon: CloudCog,
         },
         {
           title: "Technical Support",
           description: "Ongoing support, updates, and continuous optimization",
           href: "#",
-          icon: BriefcaseBusiness,
+          icon: LifeBuoy,
         },
         {
           title: "Launch Packages",
           description: "Structured packages for startups and expanding businesses",
           href: "#",
-          icon: FileCode2,
+          icon: BriefcaseBusiness,
         },
       ],
     ],
@@ -133,13 +135,13 @@ const megaMenuItems: MegaMenuItem[] = [
           title: "SEO",
           description: "Modern SEO foundations for local and international visibility",
           href: "#",
-          icon: Sparkles,
+          icon: Globe,
         },
         {
           title: "Google Maps (GMR)",
           description: "Map profile optimization, local authority, and presence signals",
           href: "#",
-          icon: Library,
+          icon: MapPin,
         },
         {
           title: "Citations",
@@ -159,13 +161,13 @@ const megaMenuItems: MegaMenuItem[] = [
           title: "Reputation Management",
           description: "Reviews, ratings, and trust signals that improve conversion",
           href: "#",
-          icon: LifeBuoy,
+          icon: Users,
         },
         {
           title: "Content Optimization",
           description: "Practical content strategy aligned with user intent and search",
           href: "#",
-          icon: CloudCog,
+          icon: BookOpenText,
         },
       ],
     ],
@@ -196,7 +198,7 @@ const megaMenuItems: MegaMenuItem[] = [
           title: "Reporting Pipelines",
           description: "Simple dashboards for campaign, lead, and revenue visibility",
           href: "#",
-          icon: Database,
+          icon: Newspaper,
         },
       ],
       [
@@ -204,19 +206,19 @@ const megaMenuItems: MegaMenuItem[] = [
           title: "CRM Integrations",
           description: "Integrate your website and forms with practical CRM workflows",
           href: "#",
-          icon: Library,
+          icon: Database,
         },
         {
           title: "Operations Automation",
           description: "Reduce manual tasks with reliable internal automations",
           href: "#",
-          icon: Boxes,
+          icon: ShieldCheck,
         },
         {
           title: "Scalable Systems",
           description: "Future-ready systems built for growth and stability",
           href: "#",
-          icon: BookOpenText,
+          icon: Globe,
         },
       ],
     ],
@@ -236,7 +238,7 @@ const megaMenuItems: MegaMenuItem[] = [
           title: "Our Story",
           description: "Why MASAR exists and how we approach digital infrastructure",
           href: "#",
-          icon: BookOpenText,
+          icon: Newspaper,
         },
         {
           title: "Case Use Scenarios",
@@ -256,7 +258,7 @@ const megaMenuItems: MegaMenuItem[] = [
           title: "Methodology",
           description: "Modern methods updated with changes in search and AI systems",
           href: "#proofs",
-          icon: Newspaper,
+          icon: Sparkles,
         },
         {
           title: "FAQ",
@@ -268,7 +270,7 @@ const megaMenuItems: MegaMenuItem[] = [
           title: "Contact",
           description: "Talk to MASAR and plan your next digital growth phase",
           href: "#contact",
-          icon: LifeBuoy,
+          icon: MapPin,
         },
       ],
     ],
@@ -287,8 +289,8 @@ type NavbarProps = {
 
 export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
   const isRTL = language === "ar";
+  const { resolvedTheme, setTheme } = useTheme();
   const [activeDesktopMenu, setActiveDesktopMenu] = useState<MenuKey | "">("");
-  const [heroInView, setHeroInView] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(84);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -298,6 +300,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
   const labels = useMemo(
     () => ({
       language: language === "ar" ? "EN" : "AR",
+      theme: language === "ar" ? "تبديل الوضع" : "Toggle theme",
       menu: language === "ar" ? "القائمة" : "Menu",
       contact: language === "ar" ? "تواصل معنا" : "Contact Us",
       close: language === "ar" ? "إغلاق" : "Close",
@@ -356,21 +359,6 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
   }, [clearCloseTimeout]);
 
   useEffect(() => {
-    const hero = document.getElementById("hero");
-    if (!hero) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setHeroInView(entry.isIntersecting);
-      },
-      { threshold: 0.05 }
-    );
-
-    observer.observe(hero);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
     const nav = navRef.current;
     if (!nav) return;
 
@@ -393,19 +381,19 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const isHeaderTransparent = heroInView && !activeDesktopMenu;
   const isHeaderHidden = hasScrolled && !activeDesktopMenu;
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 transition-[transform,opacity,color,background-color,border-color] duration-200",
+        "fixed inset-x-0 top-0 z-50 transition-[transform,opacity,color,background-color,border-color] duration-200",
         isHeaderHidden ? "-translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100",
-        isHeaderTransparent ? "border-b border-transparent bg-transparent" : "border-b border-black/10 bg-white/92 backdrop-blur-xl"
+        "border-b border-transparent bg-transparent"
       )}
     >
       <nav
         ref={navRef}
+        dir="ltr"
         aria-label="Primary"
         onMouseEnter={clearCloseTimeout}
         onMouseLeave={scheduleClose}
@@ -420,10 +408,13 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
         <Link
           href={`/${language}`}
           aria-label={labels.home}
-          className={cn("flex items-center gap-3 text-[#161611]", isRTL && "flex-row-reverse")}
+          className={cn("flex items-center gap-3 text-[#161611] dark:text-[#EAF2EE]", isRTL && "flex-row-reverse")}
         >
-          <AntigravityLogo className="size-5" />
-          <span className={cn("text-[1.8rem] font-semibold tracking-tight", isRTL && "arabic-text")}>MASAR</span>
+          <AntigravityLogo
+            alt="MASAR Marketing"
+            priority
+            className="inline-flex h-14 aspect-[711/227] items-center justify-start"
+          />
         </Link>
 
         <NavigationMenu
@@ -452,7 +443,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                     setActiveDesktopMenu((prev) => (prev === item.key ? "" : item.key));
                   }}
                   className={cn(
-                    "h-10 rounded-md bg-transparent px-4 text-[0.96rem] font-medium text-[#5D5D54] hover:bg-[#ECEAE5] hover:text-[#1C1C16] data-[state=open]:bg-[#ECEAE5] data-[state=open]:text-[#1C1C16]",
+                    "h-10 rounded-full bg-transparent px-4 text-[0.96rem] font-medium text-[#5D5D54] hover:bg-[#ECEAE5] hover:text-[#1C1C16] data-[state=open]:bg-[#ECEAE5] data-[state=open]:text-[#1C1C16] dark:text-[#C9D4CF] dark:hover:bg-white/10 dark:hover:text-white dark:data-[state=open]:bg-white/12 dark:data-[state=open]:text-white",
                     isRTL ? "arabic-text" : "uppercase tracking-[0.04em]"
                   )}
                 >
@@ -462,7 +453,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                   id={`main-nav-content-${item.key}`}
                   onMouseEnter={clearCloseTimeout}
                   onMouseLeave={scheduleClose}
-                  className="md:!fixed md:!left-1/2 md:!right-auto md:!mt-0 md:!w-[min(1120px,calc(100vw-2rem))] md:!max-w-none md:!-translate-x-1/2 !overflow-visible !rounded-2xl !border !border-black/10 bg-[#F8F8F6] !p-0 shadow-[0_22px_40px_rgba(12,12,11,0.08)]"
+                  className="md:!fixed md:!left-1/2 md:!right-auto md:!mt-0 md:!w-[min(1120px,calc(100vw-2rem))] md:!max-w-none md:!-translate-x-1/2 !overflow-visible !rounded-2xl !border !border-black/10 bg-[#F8F8F6] !p-0 shadow-[0_22px_40px_rgba(12,12,11,0.08)] dark:!border-[#D9FFF4]/40 dark:bg-[#0F1716] dark:shadow-[0_22px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(217,255,244,0.24)]"
                   style={{ top: `${headerHeight}px` }}
                 >
                   <div className="w-full">
@@ -489,17 +480,32 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
             type="button"
             variant="ghost"
             size="sm"
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            aria-label={labels.theme}
+            className={cn(
+              "hidden h-10 rounded-full bg-transparent px-2.5 text-[#4D4D45] transition-colors hover:bg-[#ECEAE5] hover:text-[#181814] dark:text-[#D6DDD8] dark:hover:bg-white/10 dark:hover:text-white md:inline-flex",
+              isRTL && "order-2"
+            )}
+          >
+            <Moon className="size-4 dark:hidden" />
+            <Sun className="hidden size-4 dark:block" />
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
             onClick={onToggleLanguage}
             aria-label="Toggle language"
             className={cn(
-              "hidden h-auto bg-transparent px-0 text-[11px] font-semibold text-[#4D4D45] transition-colors hover:bg-transparent hover:text-[#181814] md:inline-flex",
+              "hidden h-auto bg-transparent px-0 text-[11px] font-semibold text-[#4D4D45] transition-colors hover:bg-transparent hover:text-[#181814] dark:text-[#D6DDD8] dark:hover:text-white md:inline-flex",
               isRTL ? "arabic-text tracking-normal" : "uppercase tracking-[0.22em]"
             )}
           >
             {labels.language}
           </Button>
 
-          <span className="hidden h-5 w-px bg-black/15 md:block" aria-hidden="true" />
+          <span className="hidden h-5 w-px bg-black/15 dark:bg-white/20 md:block" aria-hidden="true" />
 
                     <StaggeredMenu
             position={isRTL ? "left" : "right"}
@@ -510,29 +516,29 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
             triggerIconColor="currentColor"
             colors={["#E6D8B8", "#4ED1B2"]}
             buttonClassName={cn(
-              "h-10 rounded-md bg-transparent px-4 text-[0.96rem] font-medium text-[#5D5D54] hover:bg-[#ECEAE5] hover:text-[#1C1C16]",
+              "h-10 rounded-full bg-transparent px-4 text-[0.96rem] font-medium text-[#5D5D54] hover:bg-[#ECEAE5] hover:text-[#1C1C16] dark:text-[#C9D4CF] dark:hover:bg-white/10 dark:hover:text-white",
               isRTL ? "arabic-text tracking-normal" : "uppercase tracking-[0.04em]"
             )}
             isRTL={isRTL}
             customContent={
               <div className="flex flex-col gap-6">
                 <div className="space-y-2">
-                  <h3 className={cn("text-3xl font-semibold tracking-tight text-[#0F1F1E]", isRTL && "arabic-text")}>
+                  <h3 className={cn("text-3xl font-semibold tracking-tight text-[#0F1F1E] dark:text-[#EAF2EE]", isRTL && "arabic-text")}>
                     {language === "ar" ? "لنبن حضورك الرقمي الحديث" : "Build Your Modern Digital Presence"}
                   </h3>
-                  <p className={cn("text-sm text-[#0F1F1E]/65", isRTL && "arabic-text")}>
+                  <p className={cn("text-sm text-[#0F1F1E]/65 dark:text-[#B8C9C3]", isRTL && "arabic-text")}>
                     {language === "ar"
                       ? "شاركنا أهدافك وسنقترح لك نظاما عمليا للتسويق والأتمتة خلال 24 ساعة."
                       : "Share your goals and we will propose a practical marketing and automation roadmap within 24 hours."}
                   </p>
                 </div>
 
-                <div className="grid gap-3 text-sm text-[#0F1F1E]">
-                  <a href="mailto:hello@masarmarketing.com" className="inline-flex items-center gap-2 hover:text-[#22C7AC]">
+                <div className="grid gap-3 text-sm text-[#0F1F1E] dark:text-[#D6E5E0]">
+                  <a href="mailto:hello@masarmarketing.com" className="inline-flex items-center gap-2 hover:text-[#22C7AC] dark:hover:text-[#6DEDD3]">
                     <Mail className="size-4" />
                     <span>hello@masarmarketing.com</span>
                   </a>
-                  <a href="tel:+963000000000" className="inline-flex items-center gap-2 hover:text-[#22C7AC]">
+                  <a href="tel:+963000000000" className="inline-flex items-center gap-2 hover:text-[#22C7AC] dark:hover:text-[#6DEDD3]">
                     <Phone className="size-4" />
                     <span>+963 000 000 000</span>
                   </a>
@@ -555,7 +561,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                       target="_blank"
                       rel="noreferrer"
                       aria-label={social.label}
-                      className="inline-flex size-10 items-center justify-center rounded-full border border-[#0F1F1E]/10 bg-white/60 text-[#0F1F1E]/75 transition-colors hover:border-[#4ED1B2] hover:text-[#22C7AC]"
+                      className="inline-flex size-10 items-center justify-center rounded-full border border-[#0F1F1E]/10 bg-white/60 text-[#0F1F1E]/75 transition-colors hover:border-[#4ED1B2] hover:text-[#22C7AC] dark:border-white/20 dark:bg-white/10 dark:text-[#D6E5E0] dark:hover:border-[#5CE1C4] dark:hover:text-[#7BF3DB]"
                     >
                       <social.icon className="size-4" />
                     </a>
@@ -574,6 +580,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                       id="contact-name"
                       name="name"
                       placeholder={language === "ar" ? "اسمك الكامل" : "Your full name"}
+                      className="h-10 rounded-xl border border-[#0F1F1E]/20 bg-white/70 text-[#0F1F1E] placeholder:text-[#6F7A77] dark:border-white/20 dark:bg-white/10 dark:text-[#EAF2EE] dark:placeholder:text-[#A8BCB6]"
                     />
                   </div>
 
@@ -584,7 +591,13 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                     >
                       {language === "ar" ? "البريد الإلكتروني" : "Email"}
                     </Label>
-                    <Input id="contact-email" name="email" type="email" placeholder="name@company.com" />
+                    <Input
+                      id="contact-email"
+                      name="email"
+                      type="email"
+                      placeholder="name@company.com"
+                      className="h-10 rounded-xl border border-[#0F1F1E]/20 bg-white/70 text-[#0F1F1E] placeholder:text-[#6F7A77] dark:border-white/20 dark:bg-white/10 dark:text-[#EAF2EE] dark:placeholder:text-[#A8BCB6]"
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -598,7 +611,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                       id="contact-message"
                       name="message"
                       placeholder={language === "ar" ? "أخبرنا عن مشروعك..." : "Tell us about your project..."}
-                      className="min-h-28 resize-none"
+                      className="min-h-28 resize-none rounded-xl border border-[#0F1F1E]/20 bg-white/70 text-[#0F1F1E] placeholder:text-[#6F7A77] dark:border-white/20 dark:bg-white/10 dark:text-[#EAF2EE] dark:placeholder:text-[#A8BCB6]"
                     />
                   </div>
                 </form>
@@ -608,7 +621,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
               <div className="mt-auto flex flex-col gap-3 pt-2">
                 <Button
                   type="button"
-                  variant="brand-outline"
+                  variant="dark-outline"
                   onClick={onToggleLanguage}
                   className={cn(
                     "h-12 px-7 text-sm",
@@ -620,7 +633,7 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
                 <Button
                   type="submit"
                   form="contact-drawer-form"
-                  variant="brand-fill"
+                  variant="dark-solid"
                   className={cn(
                     "h-12 px-7 text-sm",
                     isRTL ? "arabic-text" : "uppercase tracking-widest"
