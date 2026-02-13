@@ -172,14 +172,14 @@ export function MainParticles() {
     const influenceRadius = 1.7;
     const influenceRadius2 = influenceRadius * influenceRadius;
 
-    const kReturn = 2.8;
+    const kReturn = 2.6;
     const kMouse = 5.6;
     const kZ = 2.9;
-    const damping = 4.6;
+    const damping = 4.2;
     const maxSpeed = 1.65;
 
-    const driftAmp = 0.09;
-    const driftFreq = 0.5;
+    const driftAmp = 0.16;
+    const driftFreq = 0.72;
 
     const posAttr = pts.geometry.attributes.position as THREE.BufferAttribute;
     const pos = posAttr.array as Float32Array;
@@ -247,6 +247,10 @@ export function MainParticles() {
       vel[i3 + 1] = vy;
       vel[i3 + 2] = vz;
     }
+
+    // Keep subtle, always-on motion even without pointer interaction.
+    pts.rotation.z = Math.sin(time * 0.2) * 0.03;
+    pts.rotation.x = Math.cos(time * 0.16) * 0.015;
 
     posAttr.needsUpdate = true;
   });

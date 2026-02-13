@@ -40,9 +40,9 @@ export default function HomePage({ language }: HomePageProps) {
       <Navbar language={language} onToggleLanguage={handleToggleLanguage} />
       <main>
         <Hero language={language} />
-        <InteractiveVideoSection language={language} />
         <ServicesGrid language={language} />
         <AboutUs language={language} />
+        <InteractiveVideoSection language={language} />
         <CasesSection language={language} />
         <FaqSection language={language} />
         <ProofsSection language={language} />

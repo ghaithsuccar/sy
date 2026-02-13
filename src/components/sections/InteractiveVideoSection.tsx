@@ -32,7 +32,8 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
   const [isVideoHovered, setIsVideoHovered] = useState(false);
   const [hoveredStory, setHoveredStory] = useState<number | null>(null);
   const [hasPointerMoved, setHasPointerMoved] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [supportsHover, setSupportsHover] = useState(true);
 
   const stories: StoryItem[] =
     language === "ar"
@@ -106,23 +107,50 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
   };
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const updatePreference = () => setSupportsHover(mediaQuery.matches);
+
+    updatePreference();
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", updatePreference);
+      return () => mediaQuery.removeEventListener("change", updatePreference);
+    }
+
+    mediaQuery.addListener(updatePreference);
+    return () => mediaQuery.removeListener(updatePreference);
+  }, []);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
     if (isInView) {
       video.play().catch(() => undefined);
       return;
     }
+
     video.pause();
   }, [isInView]);
 
-  const isInteractiveHover = isVideoHovered || hoveredStory !== null;
+  useEffect(() => {
+    if (!isInView || hoveredStory !== null) return;
+    const interval = window.setInterval(() => {
+      setActiveStory((previous) => (previous + 1) % stories.length);
+    }, 3800);
+
+    return () => window.clearInterval(interval);
+  }, [hoveredStory, isInView, stories.length]);
+
+  const isInteractiveHover = supportsHover ? isVideoHovered || hoveredStory !== null : true;
+
   const baseX = useMotionValue(0);
   const baseY = useMotionValue(0);
   const ctaX = useSpring(baseX, { stiffness: 280, damping: 30, mass: 0.55 });
   const ctaY = useSpring(baseY, { stiffness: 280, damping: 30, mass: 0.55 });
 
   const handleStagePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!stageRef.current) return;
+    if (!stageRef.current || !supportsHover) return;
     const rect = stageRef.current.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
@@ -134,7 +162,7 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
   };
 
   const handleStagePointerEnter = () => {
-    if (!stageRef.current) return;
+    if (!stageRef.current || !supportsHover) return;
     const rect = stageRef.current.getBoundingClientRect();
     baseX.set(rect.width * 0.28);
     baseY.set(rect.height * 0.58);
@@ -143,17 +171,23 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
   const toggleVideoPlayback = () => {
     const video = videoRef.current;
     if (!video) return;
+
     if (video.paused) {
-      video.play().catch(() => undefined);
+      video
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
       return;
     }
+
     video.pause();
+    setIsPlaying(false);
   };
 
   return (
     <section
       ref={sectionRef}
-      dir="ltr"
+      dir={isRTL ? "rtl" : "ltr"}
       className="relative overflow-hidden bg-white px-6 py-20 text-[#0F1F1E] dark:bg-[#0F1F1E] dark:text-[#EAF2EE]"
     >
       <div
@@ -202,6 +236,7 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
                     setHoveredStory(index);
                   }}
                   onBlur={() => setHoveredStory(null)}
+                  onClick={() => setActiveStory(index)}
                   className={cn(
                     "group flex w-full items-start gap-4 border-b border-[#E6D8B8]/60 px-0 py-4 text-left transition-all duration-200 dark:border-[#4ED1B2]/20",
                     isRTL && "flex-row-reverse text-right",
@@ -244,14 +279,24 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
             isRTL ? "lg:order-1" : "lg:order-2"
           )}
           ref={stageRef}
-          onHoverStart={() => setIsVideoHovered(true)}
+          onHoverStart={() => {
+            if (!supportsHover) return;
+            setIsVideoHovered(true);
+          }}
           onHoverEnd={() => {
+            if (!supportsHover) return;
             setIsVideoHovered(false);
             setHoveredStory(null);
             setHasPointerMoved(false);
           }}
           onPointerEnter={handleStagePointerEnter}
           onPointerMove={handleStagePointerMove}
+          onPointerLeave={() => {
+            if (!supportsHover) return;
+            setIsVideoHovered(false);
+            setHoveredStory(null);
+            setHasPointerMoved(false);
+          }}
           onClick={toggleVideoPlayback}
         >
           <motion.video
@@ -263,7 +308,7 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
             autoPlay
             preload="metadata"
             className="h-full min-h-[460px] w-full object-cover"
-            animate={{ scale: isInteractiveHover ? 1.03 : 1 }}
+            animate={{ scale: supportsHover && isInteractiveHover ? 1.03 : 1 }}
             transition={{ duration: 0.45, ease: "easeOut" }}
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
@@ -302,17 +347,24 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
               toggleVideoPlayback();
             }}
             animate={{
-              opacity: isInteractiveHover ? 1 : 0,
-              scale: isInteractiveHover ? 1 : 0.96,
+              opacity: supportsHover ? (isInteractiveHover ? 1 : 0) : 1,
+              scale: supportsHover ? (isInteractiveHover ? 1 : 0.96) : 1,
             }}
             transition={{ duration: 0.25 }}
             className={cn(
-              "absolute z-10 inline-flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#4ED1B2] p-3 text-[#0F1F1E] shadow-[0_8px_20px_rgba(78,209,178,0.38)] hover:bg-[#7BDEC7]"
+              "absolute z-10 inline-flex items-center justify-center rounded-full bg-[#4ED1B2] text-[#0F1F1E] shadow-[0_8px_20px_rgba(78,209,178,0.38)] hover:bg-[#7BDEC7]",
+              supportsHover
+                ? "-translate-x-1/2 -translate-y-1/2 p-3"
+                : cn("bottom-5 p-3.5", isRTL ? "left-5" : "right-5")
             )}
-            style={{
-              left: hasPointerMoved ? ctaX : "30%",
-              top: hasPointerMoved ? ctaY : "58%",
-            }}
+            style={
+              supportsHover
+                ? {
+                    left: hasPointerMoved ? ctaX : "30%",
+                    top: hasPointerMoved ? ctaY : "58%",
+                  }
+                : undefined
+            }
             aria-label={isPlaying ? (isRTL ? "إيقاف الفيديو" : "Pause video") : (isRTL ? "تشغيل الفيديو" : "Play video")}
           >
             {isPlaying ? <Pause className="size-5 fill-current" /> : <Play className="size-5 fill-current" />}
@@ -333,6 +385,10 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
                   setHoveredStory(index);
                 }}
                 onBlur={() => setHoveredStory(null)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setActiveStory(index);
+                }}
                 className={cn(
                   "h-2.5 rounded-full transition-all",
                   index === activeStory ? "w-7 bg-[#E6D8B8]" : "w-2.5 bg-[#4ED1B2]/60 hover:bg-[#4ED1B2]"

@@ -1,193 +1,217 @@
-﻿"use client";
+"use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
+import {
+  Bot,
+  Brush,
+  Globe2,
+  Megaphone,
+  Search,
+  ShieldCheck,
+} from "lucide-react";
+import Image from "next/image";
 
-import { Card, CardContent } from "@/components/ui/card";
 import type { Language } from "@/lib/use-language";
 import { cn } from "@/lib/utils";
 
-const services = [
+type ServiceCard = {
+  key: string;
+  icon: LucideIcon;
+  title: { en: string; ar: string };
+  description: { en: string; ar: string };
+  image: string;
+};
+
+const services: ServiceCard[] = [
   {
     key: "web",
-    category: { en: "Web", ar: "الويب" },
+    icon: Globe2,
     title: { en: "Web Development & Hosting", ar: "تطوير المواقع والاستضافة" },
-    image:
-      "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
+    description: {
+      en: "Conversion-ready websites with stable deployment and hosting infrastructure.",
+      ar: "مواقع مهيأة للتحويل مع بنية نشر واستضافة مستقرة.",
+    },
+    image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "branding",
-    category: { en: "Branding", ar: "الهوية" },
+    icon: Brush,
     title: { en: "Graphic Design & Branding", ar: "التصميم والهوية البصرية" },
-    image:
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
+    description: {
+      en: "Visual systems that keep your brand consistent across every touchpoint.",
+      ar: "أنظمة بصرية تحافظ على اتساق العلامة عبر كل نقاط التفاعل.",
+    },
+    image: "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "automation",
-    category: { en: "Automation", ar: "الأتمتة" },
+    icon: Bot,
     title: { en: "Automation Systems", ar: "أنظمة الأتمتة" },
-    image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+    description: {
+      en: "Connected workflows that route leads and reduce repetitive manual work.",
+      ar: "سير عمل مترابط يوجه العملاء المحتملين ويقلل المهام اليدوية المتكررة.",
+    },
+    image: "https://images.unsplash.com/photo-1586771107445-d3ca888129ce?auto=format&fit=crop&w=1200&q=80",
   },
   {
-    key: "seo",
-    category: { en: "Visibility", ar: "الظهور الرقمي" },
-    title: { en: "SEO, GMR & AI Visibility", ar: "السيو وخرائط جوجل والظهور في الذكاء الاصطناعي" },
-    image:
-      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
+    key: "visibility",
+    icon: Search,
+    title: { en: "SEO, Maps & AI Visibility", ar: "السيو والخرائط والظهور بالذكاء الاصطناعي" },
+    description: {
+      en: "Search-ready structure for stronger visibility in Google and AI-driven discovery.",
+      ar: "بنية ظهور قوية في جوجل ونتائج الاكتشاف المعتمدة على الذكاء الاصطناعي.",
+    },
+    image: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?auto=format&fit=crop&w=1200&q=80",
   },
   {
     key: "reputation",
-    category: { en: "Trust", ar: "السمعة" },
+    icon: ShieldCheck,
     title: { en: "Reputation & Reviews", ar: "إدارة السمعة والتقييمات" },
-    image:
-      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80",
+    description: {
+      en: "Review and trust frameworks that strengthen buyer confidence.",
+      ar: "منظومة تقييمات وثقة تعزز قناعة العميل قبل اتخاذ القرار.",
+    },
+    image: "https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    key: "campaigns",
+    icon: Megaphone,
+    title: { en: "Campaign Operations", ar: "تشغيل الحملات الإعلانية" },
+    description: {
+      en: "Performance-focused campaign execution with clear channel accountability.",
+      ar: "تشغيل حملات مبني على الأداء مع وضوح المسؤولية لكل قناة.",
+    },
+    image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1200&q=80",
   },
 ];
 
+const easeClass = "[transition-timing-function:cubic-bezier(0.4,0,0.2,1)]";
+
 export default function ServicesGrid({ language }: { language: Language }) {
   const isRTL = language === "ar";
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const stickyRef = useRef<HTMLDivElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const [trackBounds, setTrackBounds] = useState({ start: 0, end: 0 });
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-  const horizontalX = useTransform(
-    scrollYProgress,
-    [0.3, 0.82],
-    [trackBounds.start, trackBounds.end]
-  );
-  const trackOpacity = useTransform(scrollYProgress, [0, 0.22, 0.3, 0.82, 0.9, 1], [0, 0, 1, 1, 0, 0]);
-  const trackY = useTransform(scrollYProgress, [0.22, 0.3, 0.82, 0.9], [24, 0, 0, 24]);
-  const headlineOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.08, 0.22, 0.3, 0.82, 0.9, 1],
-    [0.55, 1, 1, 0, 0, 1, 1]
-  );
-  const headlineScale = useTransform(
-    scrollYProgress,
-    [0, 0.08, 0.22, 0.3, 0.82, 0.9, 1],
-    [0.97, 1, 1, 0.98, 0.98, 1, 1]
-  );
-  const headlineY = useTransform(scrollYProgress, [0, 0.08, 0.22, 0.3, 0.82, 0.9, 1], [20, 0, 0, -36, -36, 0, 0]);
-  const headlineGlow = useTransform(scrollYProgress, [0.08, 0.22, 0.9, 1], [0.3, 1, 0.6, 0.6]);
-  const headlineTextShadow = useTransform(
-    headlineGlow,
-    (value) => `0 0 ${value * 24}px rgba(15,31,30,0.12)`
-  );
 
-  useLayoutEffect(() => {
-    const measure = () => {
-      if (!stickyRef.current || !trackRef.current) return;
-      const viewportWidth = stickyRef.current.clientWidth;
-      const trackWidth = trackRef.current.scrollWidth;
-      const overshoot = 220;
-      const start = isRTL ? -trackWidth - overshoot : viewportWidth + overshoot;
-      const end = isRTL ? viewportWidth + overshoot : -trackWidth - overshoot;
-      setTrackBounds({ start, end });
-    };
-
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [isRTL]);
+  const copy = {
+    eyebrow: { en: "Core Services", ar: "الخدمات الأساسية" },
+    heading: {
+      en: "Service Layers Built For Measurable Growth",
+      ar: "طبقات خدمات مبنية لنمو قابل للقياس",
+    },
+    description: {
+      en: "Six integrated services delivered as one modern operating model.",
+      ar: "ست خدمات مترابطة تُدار ضمن نموذج تشغيلي حديث واحد.",
+    },
+  };
 
   return (
     <section
       id="services"
-      ref={sectionRef}
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative h-[560vh] bg-white text-[#0F1F1E] dark:bg-[#070D0C] dark:text-[#EAF2EE]"
+      className="relative overflow-hidden bg-white px-6 py-24"
     >
-      <div
-        ref={stickyRef}
-        className="sticky top-0 flex h-screen items-center overflow-hidden px-6"
-      >
-        <div className="relative mx-auto w-full max-w-6xl">
-          <div className="relative flex min-h-[45vh] items-center justify-center">
-            <motion.div
-              style={{
-                scale: headlineScale,
-                opacity: headlineOpacity,
-                y: headlineY,
-              }}
-              className={cn("relative z-10 text-center", isRTL && "text-right")}
-            >
-              <p
-                className={cn(
-                  "text-xs font-semibold text-[#5A6B66] dark:text-[#9FB1AB]",
-                  isRTL ? "arabic-text" : "uppercase tracking-[0.35em]"
-                )}
-              >
-                {isRTL ? "خدماتنا الأساسية" : "Core Services"}
-              </p>
-              <motion.h2
-                className={cn(
-                  "mt-4 text-4xl font-semibold tracking-tight text-[#0F1F1E]/85 dark:text-[#EAF2EE]/90 sm:text-5xl lg:text-6xl",
-                  isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
-                )}
-                style={{ textShadow: headlineTextShadow }}
-              >
-                {isRTL ? "نبني بنية رقمية حديثة قابلة للنمو" : "WE BUILD MODERN DIGITAL INFRASTRUCTURE"}
-              </motion.h2>
-            </motion.div>
-          </div>
-
-          <motion.div
-            ref={trackRef}
-            style={{ x: horizontalX, opacity: trackOpacity, y: trackY }}
-            className="absolute left-0 top-[52%] z-20 flex w-max -translate-y-1/2 items-center gap-6"
+      <div className="mx-auto w-full max-w-7xl">
+        <header className="mx-auto mb-12 max-w-3xl text-center">
+          <p
+            className={cn(
+              "text-xs font-semibold text-[#696969] uppercase tracking-[0.24em]",
+              isRTL && "arabic-text tracking-normal"
+            )}
           >
-            {services.map((service) => (
-              <motion.div
+            {copy.eyebrow[language]}
+          </p>
+          <h2
+            className={cn(
+              "mt-4 text-4xl font-semibold tracking-tight text-[#010101] sm:text-5xl",
+              isRTL ? "arabic-text" : "font-inter"
+            )}
+          >
+            {copy.heading[language]}
+          </h2>
+          <p className={cn("mt-4 text-base leading-7 text-[#696969]", isRTL && "arabic-text")}>
+            {copy.description[language]}
+          </p>
+        </header>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {services.map((service) => {
+            const Icon = service.icon;
+
+            return (
+              <article
                 key={service.key}
-                whileHover={{ y: -20, scale: 1.02 }}
-                className="group"
+                className={cn(
+                  "group relative h-[310px] overflow-hidden rounded-[24px] bg-[#F5F5F5] p-7",
+                  "transition-transform duration-500",
+                  easeClass,
+                  "hover:scale-[1.02]"
+                )}
               >
-                <Card className="relative w-[280px] aspect-[9/16] overflow-hidden rounded-2xl border-0 bg-transparent p-0 text-white shadow-[0_22px_55px_rgba(15,31,30,0.2)] sm:w-[300px] lg:w-[320px]">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                    style={{ backgroundImage: `url(${service.image})` }}
+                <div
+                  className={cn(
+                    "absolute inset-0 opacity-0 transition-opacity duration-500",
+                    easeClass,
+                    "group-hover:opacity-100"
+                  )}
+                  aria-hidden="true"
+                >
+                  <Image
+                    src={service.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/22 to-transparent" />
-                  <CardContent
+                </div>
+
+                <div
+                  className={cn(
+                    "absolute inset-0 opacity-0 transition-opacity duration-500",
+                    easeClass,
+                    "bg-[#0F1F1E]/40 group-hover:opacity-100"
+                  )}
+                  aria-hidden="true"
+                />
+
+                <div className={cn("relative z-10 flex h-full flex-col", isRTL && "items-end text-right")}>
+                  <span
                     className={cn(
-                      "absolute inset-x-0 bottom-0 p-0 text-white",
-                      isRTL && "text-right"
+                      "inline-flex size-14 items-center justify-center rounded-full",
+                      "border border-[#4ED1B2]/55 bg-transparent text-[#4ED1B2]",
+                      "transition-all duration-500",
+                      easeClass,
+                      "group-hover:border-white/35 group-hover:bg-white/18 group-hover:text-white group-hover:backdrop-blur-md"
                     )}
                   >
-                    <div className="bg-gradient-to-t from-[#060A09]/92 via-[#060A09]/52 to-transparent px-5 pb-5 pt-12">
-                      <p
-                        className={cn(
-                          "text-[0.63rem] font-semibold text-[#8FE8D2]/95",
-                          isRTL ? "arabic-text tracking-normal" : "uppercase tracking-[0.24em]"
-                        )}
-                      >
-                        {service.category[language]}
-                      </p>
-                      <p
-                        className={cn(
-                          "mt-2 text-[1.55rem] font-semibold leading-[1.1] text-white",
-                          isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
-                        )}
-                      >
-                        {service.title[language]}
-                      </p>
-                      <span
-                        className={cn(
-                          "mt-3 block h-px w-16 bg-gradient-to-r from-[#6AEACB] to-transparent",
-                          isRTL && "mr-auto"
-                        )}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
+                    <Icon className="size-6" />
+                  </span>
+
+                  <div className="mt-auto max-w-[88%]">
+                    <h3
+                      className={cn(
+                        "text-2xl font-semibold leading-tight text-[#010101]",
+                        "transition-colors duration-500",
+                        easeClass,
+                        "group-hover:text-white",
+                        isRTL && "arabic-text"
+                      )}
+                    >
+                      {service.title[language]}
+                    </h3>
+                    <p
+                      className={cn(
+                        "mt-3 text-base leading-7 text-[#696969]",
+                        "transition-colors duration-500",
+                        easeClass,
+                        "group-hover:text-white",
+                        isRTL && "arabic-text"
+                      )}
+                    >
+                      {service.description[language]}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
