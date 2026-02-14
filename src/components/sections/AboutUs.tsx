@@ -2,7 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 
-import SocialOrbitShape from "@/components/sections/about/SocialOrbitShape";
+import SignalGatewayShape from "@/components/sections/about/SignalGatewayShape";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -104,7 +104,7 @@ export default function AboutUs({ language }: { language: Language }) {
 
           <div className="relative min-h-[380px] overflow-hidden rounded-3xl border border-[#0F1F1E]/10 bg-transparent dark:border-white/15 dark:bg-transparent">
             <div className="absolute inset-0">
-              <SocialOrbitShape />
+              <SignalGatewayShape />
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/Hero";
 import InteractiveVideoSection from "@/components/sections/InteractiveVideoSection";
 import ServicesGrid from "@/components/sections/ServicesGrid";
+import ProcessSection from "@/components/sections/ProcessSection";
 import AboutUs from "@/components/sections/AboutUs";
 import CasesSection from "@/components/sections/CasesSection";
 import FaqSection from "@/components/sections/FaqSection";
@@ -62,6 +63,7 @@ export default function HomePage({ language }: HomePageProps) {
         <Hero language={language} />
         <HeroServicesDivider />
         <ServicesGrid language={language} />
+        <ProcessSection language={language} />
         <AboutUs language={language} />
         <CasesSection language={language} />
         <FaqSection language={language} />
