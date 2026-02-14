@@ -1,7 +1,11 @@
 "use client";
 
-import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 
+import SocialOrbitShape from "@/components/sections/about/SocialOrbitShape";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import type { Language } from "@/lib/use-language";
 import { cn } from "@/lib/utils";
 
@@ -13,19 +17,19 @@ type MetricItem = {
 const metrics: MetricItem[] = [
   {
     value: "450+",
-    label: { en: "Projects delivered", ar: "مشاريع تم تنفيذها" },
+    label: { en: "Projects delivered", ar: "\u0645\u0634\u0627\u0631\u064a\u0639 \u062a\u0645 \u062a\u0646\u0641\u064a\u0630\u0647\u0627" },
   },
   {
     value: "17+",
-    label: { en: "Years of experience", ar: "سنوات خبرة" },
+    label: { en: "Years of experience", ar: "\u0633\u0646\u0648\u0627\u062a \u062e\u0628\u0631\u0629" },
   },
   {
     value: "42+",
-    label: { en: "Cities served", ar: "مدن نخدمها" },
+    label: { en: "Cities served", ar: "\u0645\u062f\u0646 \u0646\u062e\u062f\u0645\u0647\u0627" },
   },
   {
     value: "80%",
-    label: { en: "Long-term clients", ar: "عملاء بعقود مستمرة" },
+    label: { en: "Long-term clients", ar: "\u0639\u0645\u0644\u0627\u0621 \u0628\u0639\u0642\u0648\u062f \u0645\u0633\u062a\u0645\u0631\u0629" },
   },
 ];
 
@@ -33,97 +37,98 @@ export default function AboutUs({ language }: { language: Language }) {
   const isRTL = language === "ar";
 
   const copy = {
-    label: { en: "Our Mission", ar: "رسالتنا" },
+    label: { en: "Our Mission", ar: "\u0631\u0633\u0627\u0644\u062a\u0646\u0627" },
     heading: {
       en: "We build digital infrastructure that helps businesses scale with clarity, consistency, and measurable outcomes.",
-      ar: "نبني بنية رقمية تساعد الشركات على التوسع بوضوح واتساق ونتائج قابلة للقياس.",
+      ar: "\u0646\u0628\u0646\u064a \u0628\u0646\u064a\u0629 \u0631\u0642\u0645\u064a\u0629 \u062a\u0633\u0627\u0639\u062f \u0627\u0644\u0634\u0631\u0643\u0627\u062a \u0639\u0644\u0649 \u0627\u0644\u062a\u0648\u0633\u0639 \u0628\u0648\u0636\u0648\u062d \u0648\u0627\u062a\u0633\u0627\u0642 \u0648\u0646\u062a\u0627\u0626\u062c \u0642\u0627\u0628\u0644\u0629 \u0644\u0644\u0642\u064a\u0627\u0633.",
     },
     body: {
-      en: "At MASAR, every system we design is built to improve visibility, simplify operations, and connect marketing to real business growth.",
-      ar: "في مسار، نصمم كل نظام بهدف تحسين الظهور، وتبسيط التشغيل، وربط التسويق بنمو أعمال حقيقي.",
+      en: "At MASAR, every system we design improves visibility, simplifies operations, and connects marketing to real business growth.",
+      ar: "\u0641\u064a \u0645\u0633\u0627\u0631\u060c \u0646\u0635\u0645\u0645 \u0643\u0644 \u0646\u0638\u0627\u0645 \u0628\u0647\u062f\u0641 \u062a\u062d\u0633\u064a\u0646 \u0627\u0644\u0638\u0647\u0648\u0631\u060c \u0648\u062a\u0628\u0633\u064a\u0637 \u0627\u0644\u062a\u0634\u063a\u064a\u0644\u060c \u0648\u0631\u0628\u0637 \u0627\u0644\u062a\u0633\u0648\u064a\u0642 \u0628\u0646\u0645\u0648 \u0623\u0639\u0645\u0627\u0644 \u062d\u0642\u064a\u0642\u064a.",
     },
-    cta: { en: "Let's Collaborate", ar: "لنبدأ التعاون" },
+    cta: { en: "Start Building With Us", ar: "\u0644\u0646\u0628\u062f\u0623 \u0627\u0644\u0628\u0646\u0627\u0621 \u0645\u0639\u064b\u0627" },
   };
 
   return (
     <section
       id="about"
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative z-20 overflow-hidden bg-[#F6F7F7] px-6 py-24 text-[#010101] dark:bg-[#070D0C] dark:text-[#EAF2EE]"
+      className="relative overflow-hidden bg-[#F6F7F7] px-6 py-24 text-[#0F1F1E] dark:bg-[#070D0C] dark:text-[#EAF2EE]"
     >
-      <div className="mx-auto w-full max-w-7xl space-y-10">
-        <div className={cn("grid items-stretch gap-8 lg:grid-cols-2", isRTL && "lg:grid-cols-[1fr_1fr]")}>
-          <div className={cn("flex flex-col justify-center", isRTL && "text-right")}>
-            <p
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[linear-gradient(180deg,rgba(78,209,178,0.12),rgba(78,209,178,0))]" />
+
+      <div className="relative mx-auto w-full max-w-7xl space-y-12">
+        <div className={cn("grid gap-8 lg:grid-cols-2 lg:gap-10", isRTL && "text-right")}>
+          <div className="flex flex-col justify-center">
+            <Badge
+              variant="brand-outline"
               className={cn(
-                "inline-flex items-center gap-2 text-sm font-medium text-[#696969]",
-                isRTL && "justify-end gap-2.5 arabic-text"
+                "w-fit text-[11px] tracking-[0.18em]",
+                isRTL && "mr-0 ml-auto arabic-text tracking-normal"
               )}
             >
-              <span className="inline-block size-2 rounded-full bg-[#24BB36]" aria-hidden="true" />
-              <span>{copy.label[language]}</span>
-            </p>
+              {copy.label[language]}
+            </Badge>
 
             <h2
               className={cn(
-                "mt-5 text-balance text-4xl font-semibold leading-tight tracking-tight text-[#010101] sm:text-5xl",
-                isRTL ? "arabic-text" : "font-inter"
+                "mt-5 max-w-2xl text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-5xl",
+                isRTL ? "arabic-text leading-[1.3]" : "font-[var(--font-jakarta)]"
               )}
             >
               {copy.heading[language]}
             </h2>
 
-            <p className={cn("mt-6 max-w-[64ch] text-xl leading-9 text-[#696969]", isRTL && "mr-auto arabic-text")}>
+            <p
+              className={cn(
+                "mt-6 max-w-[64ch] text-base leading-8 text-[#4A5754] dark:text-[#A9B9B4]",
+                isRTL && "mr-auto arabic-text"
+              )}
+            >
               {copy.body[language]}
             </p>
 
             <div className={cn("mt-8", isRTL && "flex justify-end")}>
-              <a
-                href="#contact"
-                className={cn(
-                  "inline-flex h-14 items-center justify-center rounded-full bg-[#24BB36] px-7 text-2xl font-semibold text-white",
-                  "transition-all duration-300 hover:bg-[#1EA62E] hover:shadow-[0_14px_30px_rgba(30,166,46,0.25)]",
-                  isRTL && "arabic-text text-xl"
-                )}
+              <Button
+                asChild
+                variant="brand-fill"
+                className={cn(isRTL ? "arabic-text tracking-normal" : "tracking-[0.12em]")}
               >
-                {copy.cta[language]}
-              </a>
+                <a href="#contact">
+                  {copy.cta[language]}
+                  <ArrowUpRight className={cn("size-4", isRTL && "order-first")} />
+                </a>
+              </Button>
             </div>
           </div>
 
-          <div className="relative min-h-[340px] overflow-hidden rounded-2xl lg:min-h-[430px]">
-            <Image
-              src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1400&q=80"
-              alt={language === "ar" ? "فريق يعمل في الحقل" : "Team working on a farm field"}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-              priority={false}
-            />
+          <div className="relative min-h-[380px] overflow-hidden rounded-3xl border border-[#0F1F1E]/10 bg-transparent dark:border-white/15 dark:bg-transparent">
+            <div className="absolute inset-0">
+              <SocialOrbitShape />
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {metrics.map((metric) => (
-            <article
+            <Card
               key={metric.value + metric.label.en}
-              className={cn(
-                "flex min-h-[220px] flex-col justify-between rounded-[24px] bg-[#ECECEC] p-7",
-                "dark:bg-[#101817]"
-              )}
+              className="rounded-2xl border-[#0F1F1E]/10 bg-white/90 py-0 dark:border-white/15 dark:bg-[#0F1716]"
             >
-              <p
-                className={cn(
-                  "text-6xl font-semibold leading-none tracking-tight text-[#010101] dark:text-[#EAF2EE]",
-                  isRTL && "arabic-text"
-                )}
-              >
-                {metric.value}
-              </p>
-              <p className={cn("text-3xl text-[#5F6368] dark:text-[#A9B9B4]", isRTL && "arabic-text")}>
-                {metric.label[language]}
-              </p>
-            </article>
+              <CardContent className={cn("p-6", isRTL && "text-right")}>
+                <p
+                  className={cn(
+                    "text-5xl font-semibold leading-none tracking-tight text-[#0F1F1E] dark:text-[#EAF2EE]",
+                    isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
+                  )}
+                >
+                  {metric.value}
+                </p>
+                <p className={cn("mt-4 text-base text-[#4A5754] dark:text-[#A9B9B4]", isRTL && "arabic-text")}>
+                  {metric.label[language]}
+                </p>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
