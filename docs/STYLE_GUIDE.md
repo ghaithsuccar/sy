@@ -155,3 +155,59 @@ Style: modern, calm, structured
 Colors: dark tech base + warm regional neutral + light AI accent
 Visuals: gateways, systems, flows
 Tone: professional, accessible, trustworthy
+
+Typography Standard
+English default font
+Use `font-brand` for all English/LTR base text containers.
+Font stack:
+'Google Sans Flex', var(--font-jakarta), system-ui, -apple-system, sans-serif
+
+English display headings
+Use `font-brand-display` for major headings, titles, and numeric display text.
+This class uses the same font stack with display variation settings:
+'wght' 500, 'wdth' 100, 'opsz' 48
+
+Arabic text
+Arabic must stay on Cairo.
+Use `font-cairo` for Arabic page-level containers and `arabic-text` for Arabic inline/section text.
+
+Do
+Use `font-brand` as the English default at page/section root.
+Use `font-brand-display` for h1/h2/h3-style content and prominent metrics.
+Keep Arabic conditionals intact with `arabic-text` and `font-cairo`.
+
+Do not
+Do not use `font-inter` for new English UI text.
+Do not use `font-[var(--font-jakarta)]` directly in class strings.
+Do not apply English display variation settings to Arabic content.
+
+Button Standard
+Primary website button style
+Use a stronger mint glass style for main actions.
+Visual direction:
+richer mint tint
+stronger blur
+clear glass highlight
+subtle lift on hover
+
+Secondary button style
+Use a softer neutral glass style for secondary actions.
+Visual direction:
+light translucent surface
+subtle mint edge on hover
+lower visual emphasis than primary
+
+Source of truth
+Button tiers are defined in `src/components/ui/button.tsx` using shared variants.
+Primary and secondary are separate visual tiers.
+
+Do
+Use `variant="brand"` for primary actions.
+Use `variant="secondary"` (or outline-style secondary variants) for secondary actions.
+Keep utility actions (for example theme toggles) on `ghost` when they should remain low emphasis.
+Keep destructive actions visually distinct.
+
+Do not
+Do not reintroduce old solid gradient/button fills for primary CTAs.
+Do not style secondary actions with the same visual weight as primary.
+Do not create one-off primary button styles in section files when the shared variant can be used.

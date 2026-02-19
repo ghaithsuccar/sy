@@ -106,9 +106,11 @@ export default function ServicesGrid({ language }: { language: Language }) {
     <section
       id="services"
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative overflow-hidden bg-white px-6 py-24"
+      className="relative overflow-hidden bg-[#F6F7F7] px-6 py-24 dark:bg-[#070D0C]"
     >
-      <div className="mx-auto w-full max-w-7xl">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[linear-gradient(180deg,rgba(78,209,178,0.12),rgba(78,209,178,0))]" />
+
+      <div className="relative mx-auto w-full max-w-7xl">
         <header className="mx-auto mb-12 max-w-3xl text-center">
           <p
             className={cn(
@@ -121,7 +123,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
           <h2
             className={cn(
               "mt-4 text-4xl font-semibold tracking-tight text-[#010101] sm:text-5xl",
-              isRTL ? "arabic-text" : "font-inter"
+              isRTL ? "arabic-text" : "font-brand-display"
             )}
           >
             {copy.heading[language]}
@@ -139,7 +141,7 @@ export default function ServicesGrid({ language }: { language: Language }) {
               <article
                 key={service.key}
                 className={cn(
-                  "group relative h-[310px] overflow-hidden rounded-[24px] bg-[#F5F5F5] p-7",
+                  "group relative h-[310px] overflow-hidden rounded-[24px] border border-[#0F1F1E]/10 bg-white p-7 shadow-[0_14px_30px_rgba(9,20,18,0.08)] dark:border-white/14 dark:bg-[#0F1716] dark:shadow-[0_16px_32px_rgba(0,0,0,0.34)]",
                   "transition-transform duration-500",
                   easeClass,
                   "hover:scale-[1.02]"

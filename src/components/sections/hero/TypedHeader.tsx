@@ -50,7 +50,7 @@ export function TypedHeader({ text, language }: TypedHeaderProps) {
       key={text} // Force re-render when text/language changes
       className={cn(
         "relative flex flex-wrap justify-center gap-[0.25em] text-5xl font-medium text-[#202124] dark:text-[#EAF2EE] sm:text-6xl md:text-7xl lg:text-8xl",
-        isRTL ? "arabic-text tracking-normal" : "landing-main-header tracking-tighter"
+        isRTL ? "arabic-text tracking-normal" : "font-brand-display tracking-tighter"
       )}
       variants={containerAndCursor}
       initial="hidden"

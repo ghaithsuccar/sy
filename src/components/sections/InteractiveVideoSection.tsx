@@ -208,7 +208,7 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
           <h3
             className={cn(
               "mt-3 text-[2rem] font-semibold leading-none tracking-tight text-[#0F1F1E] dark:text-[#EAF2EE]",
-              isRTL ? "arabic-text text-right" : "font-[var(--font-jakarta)]"
+              isRTL ? "arabic-text text-right" : "font-brand-display"
             )}
           >
             {language === "ar" ? "من الخطة إلى التحويل" : "From Strategy To Conversion"}
@@ -327,7 +327,7 @@ export default function InteractiveVideoSection({ language }: InteractiveVideoSe
             <p
               className={cn(
                 "max-w-[78%] text-2xl font-semibold tracking-tight",
-                isRTL ? "ml-auto arabic-text" : "font-[var(--font-jakarta)]"
+                isRTL ? "ml-auto arabic-text" : "font-brand-display"
               )}
             >
               {labels.stageTitle}

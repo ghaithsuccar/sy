@@ -132,7 +132,7 @@ export default function CasesSection({ language }: { language: Language }) {
             <h2
               className={cn(
                 "max-w-3xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl",
-                isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
+                isRTL ? "arabic-text" : "font-brand-display"
               )}
             >
               {copy.heading[language]}
@@ -197,7 +197,7 @@ export default function CasesSection({ language }: { language: Language }) {
                     <h3
                       className={cn(
                         "text-2xl font-semibold leading-tight tracking-tight text-[#0F1F1E]",
-                        isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
+                        isRTL ? "arabic-text" : "font-brand-display"
                       )}
                     >
                       {item.title[language]}

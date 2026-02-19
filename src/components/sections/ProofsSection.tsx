@@ -125,7 +125,7 @@ export default function ProofsSection({ language }: { language: Language }) {
             <h2
               className={cn(
                 "max-w-3xl whitespace-pre-line text-balance text-5xl font-semibold leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl",
-                isRTL ? "arabic-text leading-[1.1]" : "font-[var(--font-jakarta)]"
+                isRTL ? "arabic-text leading-[1.1]" : "font-brand-display"
               )}
             >
               {copy.heading[language]}
@@ -162,14 +162,14 @@ export default function ProofsSection({ language }: { language: Language }) {
 
             <div className="rounded-2xl border border-[#0F1F1E]/10 bg-[#F7FBFA] p-4 dark:border-white/15 dark:bg-[#0F1716]">
               <p className={cn("text-xs text-[#5A6B66] dark:text-[#9FB1AB]", isRTL ? "arabic-text" : "uppercase tracking-[0.16em]")}>{copy.metricLabel[language]}</p>
-              <p className={cn("mt-2 text-4xl font-semibold text-[#0F1F1E]", isRTL ? "arabic-text" : "font-[var(--font-jakarta)]")}>
+              <p className={cn("mt-2 text-4xl font-semibold text-[#0F1F1E]", isRTL ? "arabic-text" : "font-brand-display")}>
                 {copy.metricValue[language]}
               </p>
             </div>
 
             <div className="rounded-2xl border border-[#0F1F1E]/10 bg-[#F7FBFA] p-4 dark:border-white/15 dark:bg-[#0F1716]">
               <p className={cn("text-xs text-[#5A6B66] dark:text-[#9FB1AB]", isRTL ? "arabic-text" : "uppercase tracking-[0.16em]")}>{copy.metricLabel2[language]}</p>
-              <p className={cn("mt-2 text-4xl font-semibold text-[#0F1F1E]", isRTL ? "arabic-text" : "font-[var(--font-jakarta)]")}>
+              <p className={cn("mt-2 text-4xl font-semibold text-[#0F1F1E]", isRTL ? "arabic-text" : "font-brand-display")}>
                 {copy.metricValue2[language]}
               </p>
             </div>
@@ -212,7 +212,7 @@ export default function ProofsSection({ language }: { language: Language }) {
                   <h3
                     className={cn(
                       "text-3xl font-semibold leading-tight tracking-tight text-[#0F1F1E] dark:text-[#EAF2EE]",
-                      isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
+                      isRTL ? "arabic-text" : "font-brand-display"
                     )}
                   >
                     {item.title[language]}

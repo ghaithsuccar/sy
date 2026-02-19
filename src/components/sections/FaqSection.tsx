@@ -159,7 +159,7 @@ export default function FaqSection({ language }: FaqSectionProps) {
             <h2
               className={cn(
                 "max-w-3xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl",
-                isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
+                isRTL ? "arabic-text" : "font-brand-display"
               )}
             >
               {copy.heading[language]}

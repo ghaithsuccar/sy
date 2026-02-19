@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useSpring,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import { BarChart3, Boxes, ClipboardList, Rocket } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -78,12 +73,6 @@ export default function ProcessSection({ language }: { language: Language }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  const glowXRaw = useMotionValue(50);
-  const glowYRaw = useMotionValue(50);
-  const glowX = useSpring(glowXRaw, { stiffness: 180, damping: 24, mass: 0.45 });
-  const glowY = useSpring(glowYRaw, { stiffness: 180, damping: 24, mass: 0.45 });
-  const boardGlow = useMotionTemplate`radial-gradient(420px circle at ${glowX}% ${glowY}%, rgba(78,209,178,0.28), transparent 72%)`;
-
   const copy = {
     eyebrow: { en: "Execution Process", ar: "\u0622\u0644\u064a\u0629 \u0627\u0644\u062a\u0646\u0641\u064a\u0630" },
     heading: {
@@ -91,8 +80,8 @@ export default function ProcessSection({ language }: { language: Language }) {
       ar: "\u0645\u0633\u0627\u0631 \u0645\u0646\u0638\u0645 \u0645\u0646 \u0627\u0644\u062a\u062e\u0637\u064a\u0637 \u062d\u062a\u0649 \u0646\u062a\u0627\u0626\u062c \u0642\u0627\u0628\u0644\u0629 \u0644\u0644\u0642\u064a\u0627\u0633.",
     },
     description: {
-      en: "Drag the timeline or hover the board to reveal each phase.",
-      ar: "\u0627\u0633\u062d\u0628 \u0627\u0644\u0645\u0633\u0627\u0631 \u0623\u0648 \u062d\u0631\u0643 \u0627\u0644\u0645\u0627\u0648\u0633 \u0644\u0627\u0633\u062a\u0639\u0631\u0627\u0636 \u0643\u0644 \u0645\u0631\u062d\u0644\u0629.",
+      en: "Drag the timeline to reveal each phase.",
+      ar: "\u0627\u0633\u062d\u0628 \u0627\u0644\u0645\u0633\u0627\u0631 \u0644\u0627\u0633\u062a\u0639\u0631\u0627\u0636 \u0643\u0644 \u0645\u0631\u062d\u0644\u0629.",
     },
     interactionHint: {
       en: "Drag to move across steps",
@@ -156,19 +145,6 @@ export default function ProcessSection({ language }: { language: Language }) {
     updateFromClientX(event.touches[0].clientX);
   };
 
-  const handleBoardMouseMove = (event: ReactMouseEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
-    const y = clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100);
-    glowXRaw.set(x);
-    glowYRaw.set(y);
-  };
-
-  const handleBoardMouseLeave = () => {
-    glowXRaw.set(50);
-    glowYRaw.set(50);
-  };
-
   const activeStep = processSteps[activeIndex];
   const ActiveIcon = activeStep.icon;
   const activePercent = indexToPercent(activeIndex);
@@ -195,7 +171,7 @@ export default function ProcessSection({ language }: { language: Language }) {
           <h2
             className={cn(
               "text-4xl font-semibold leading-tight tracking-tight sm:text-5xl",
-              isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
+              isRTL ? "arabic-text" : "font-brand-display"
             )}
           >
             {copy.heading[language]}
@@ -205,12 +181,7 @@ export default function ProcessSection({ language }: { language: Language }) {
           </p>
         </header>
 
-        <motion.div
-          onMouseMove={handleBoardMouseMove}
-          onMouseLeave={handleBoardMouseLeave}
-          className="relative overflow-hidden rounded-[32px] border border-[#0F1F1E]/10 bg-[linear-gradient(150deg,#FFFFFF,#F4F8F7)] p-6 sm:p-8 lg:p-10 dark:border-white/15 dark:bg-[linear-gradient(150deg,#0F1716,#0A1211)]"
-        >
-          <motion.div className="pointer-events-none absolute inset-0" style={{ background: boardGlow }} />
+        <motion.div className="relative overflow-hidden rounded-[32px] border border-[#0F1F1E]/10 bg-[linear-gradient(150deg,#FFFFFF,#F4F8F7)] p-6 sm:p-8 lg:p-10 dark:border-white/15 dark:bg-[linear-gradient(150deg,#0F1716,#0A1211)]">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(230,216,184,0.3),transparent_56%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(230,216,184,0.12),transparent_56%)]" />
 
           <div className="relative grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">

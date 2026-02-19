@@ -73,7 +73,7 @@ export default function AboutUs({ language }: { language: Language }) {
             <h2
               className={cn(
                 "mt-5 max-w-2xl text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-5xl",
-                isRTL ? "arabic-text leading-[1.3]" : "font-[var(--font-jakarta)]"
+                isRTL ? "arabic-text leading-[1.3]" : "font-brand-display"
               )}
             >
               {copy.heading[language]}
@@ -119,7 +119,7 @@ export default function AboutUs({ language }: { language: Language }) {
                 <p
                   className={cn(
                     "text-5xl font-semibold leading-none tracking-tight text-[#0F1F1E] dark:text-[#EAF2EE]",
-                    isRTL ? "arabic-text" : "font-[var(--font-jakarta)]"
+                    isRTL ? "arabic-text" : "font-brand-display"
                   )}
                 >
                   {metric.value}

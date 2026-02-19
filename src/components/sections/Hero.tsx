@@ -79,11 +79,8 @@ export default function Hero({ language }: HeroProps) {
 
             <Button
               asChild
-              variant="dark-outline"
-              className={cn(
-                "group h-12 min-w-[220px] justify-center gap-2.5",
-                "dark:border-[#4ED1B2]/70 dark:bg-[#4ED1B2]/10 dark:text-[#E8FFF8] dark:hover:bg-[#4ED1B2]/20"
-              )}
+              variant="secondary"
+              className={cn("group h-12 min-w-[220px] justify-center gap-2.5")}
             >
               <a href="#services">
                 <span className={cn(isRTL && "leading-none")}>{content.secondaryCta}</span>
@@ -106,10 +103,9 @@ export default function Hero({ language }: HeroProps) {
         </div>
       </div>
 
-      <div className="absolute bottom-16 left-0 right-0 z-10 md:bottom-20">
+      <div className="absolute bottom-0 left-0 right-0 z-10 md:bottom-4">
         <FloatingIconsStrip language={language} />
       </div>
     </section>
   );
 }
-

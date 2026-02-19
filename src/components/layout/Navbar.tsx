@@ -25,6 +25,7 @@ import {
   Youtube,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 
@@ -55,7 +56,7 @@ const mobileNavItems = [
     label: { en: "Solutions", ar: "الحلول" },
   },
   {
-    href: "#about",
+    href: "/about",
     label: { en: "About MASAR", ar: "عن مسار" },
   },
 ];
@@ -237,7 +238,7 @@ const megaMenuItems: MegaMenuItem[] = [
         {
           title: "Our Story",
           description: "Why MASAR exists and how we approach digital infrastructure",
-          href: "#",
+          href: "/about",
           icon: Newspaper,
         },
         {
@@ -276,7 +277,7 @@ const megaMenuItems: MegaMenuItem[] = [
     ],
     preview: {
       title: { en: "Modern, Practical, Future-Ready", ar: "حلول حديثة وعملية وجاهزة للمستقبل" },
-      href: "#",
+      href: "/about",
       imageSrc: "/mega/resources-preview.svg",
     },
   },
@@ -289,6 +290,7 @@ type NavbarProps = {
 
 export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
   const isRTL = language === "ar";
+  const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
   const [activeDesktopMenu, setActiveDesktopMenu] = useState<MenuKey | "">("");
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -309,14 +311,30 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
     [language]
   );
 
+  const resolveNavHref = useCallback(
+    (href: string) => {
+      const homePath = `/${language}`;
+      const isHomePath = pathname === homePath || pathname === `${homePath}/`;
+
+      if (href === "#") return href;
+      if (href.startsWith("#")) return isHomePath ? href : `${homePath}${href}`;
+
+      if (!href.startsWith("/")) return href;
+      if (href === homePath || href.startsWith(`${homePath}/`)) return href;
+      if (href === "/") return homePath;
+      return `${homePath}${href}`;
+    },
+    [language, pathname]
+  );
+
   const menuItems = useMemo(
     () =>
       mobileNavItems.map((item) => ({
-        href: item.href,
+        href: resolveNavHref(item.href),
         label: item.label[language],
         ariaLabel: item.label[language],
       })),
-    [language]
+    [language, resolveNavHref]
   );
 
   const clearCloseTimeout = useCallback(() => {
@@ -424,54 +442,63 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
           className="absolute left-1/2 hidden -translate-x-1/2 md:flex"
         >
           <NavigationMenuList className={cn("gap-2", isRTL && "flex-row-reverse")}>
-            {megaMenuItems.map((item) => (
-              <NavigationMenuItem
-                key={item.key}
-                value={item.key}
-                onMouseEnter={() => {
-                  clearCloseTimeout();
-                  setActiveDesktopMenu(item.key);
-                }}
-              >
-                <NavigationMenuTrigger
-                  id={`main-nav-trigger-${item.key}`}
-                  aria-controls={`main-nav-content-${item.key}`}
-                  data-mega-menu-trigger={item.key}
-                  onClick={(event) => {
-                    event.preventDefault();
+            {megaMenuItems.map((item) => {
+              const localizedColumns = item.columns.map((column) =>
+                column.map((columnItem) => ({
+                  ...columnItem,
+                  href: resolveNavHref(columnItem.href),
+                }))
+              ) as [MegaMenuLinkItem[], MegaMenuLinkItem[]];
+
+              return (
+                <NavigationMenuItem
+                  key={item.key}
+                  value={item.key}
+                  onMouseEnter={() => {
                     clearCloseTimeout();
-                    setActiveDesktopMenu((prev) => (prev === item.key ? "" : item.key));
+                    setActiveDesktopMenu(item.key);
                   }}
-                  className={cn(
-                    "h-10 rounded-full bg-transparent px-4 text-[0.96rem] font-medium text-[#5D5D54] hover:bg-[#ECEAE5] hover:text-[#1C1C16] data-[state=open]:bg-[#ECEAE5] data-[state=open]:text-[#1C1C16] dark:text-[#C9D4CF] dark:hover:bg-white/10 dark:hover:text-white dark:data-[state=open]:bg-white/12 dark:data-[state=open]:text-white",
-                    isRTL ? "arabic-text" : "uppercase tracking-[0.04em]"
-                  )}
                 >
-                  {item.label[language]}
-                </NavigationMenuTrigger>
-                <NavigationMenuContent
-                  id={`main-nav-content-${item.key}`}
-                  onMouseEnter={clearCloseTimeout}
-                  onMouseLeave={scheduleClose}
-                  className="md:!fixed md:!left-1/2 md:!right-auto md:!mt-0 md:!w-[min(1120px,calc(100vw-2rem))] md:!max-w-none md:!-translate-x-1/2 !overflow-visible !rounded-2xl !border !border-black/10 bg-[#F8F8F6] !p-0 shadow-[0_22px_40px_rgba(12,12,11,0.08)] dark:!border-[#D9FFF4]/40 dark:bg-[#0F1716] dark:shadow-[0_22px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(217,255,244,0.24)]"
-                  style={{ top: `${headerHeight}px` }}
-                >
-                  <div className="w-full">
-                    <MegaMenuContent
-                      columns={item.columns}
-                      preview={{
-                        title: item.preview.title[language],
-                        href: item.preview.href,
-                        imageSrc: item.preview.imageSrc,
-                        badge: item.preview.badge?.[language],
-                      }}
-                      isRTL={isRTL}
-                      onItemSelect={() => closeDesktopMenu(false)}
-                    />
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            ))}
+                  <NavigationMenuTrigger
+                    id={`main-nav-trigger-${item.key}`}
+                    aria-controls={`main-nav-content-${item.key}`}
+                    data-mega-menu-trigger={item.key}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      clearCloseTimeout();
+                      setActiveDesktopMenu((prev) => (prev === item.key ? "" : item.key));
+                    }}
+                    className={cn(
+                      "h-10 rounded-full bg-transparent px-4 text-[0.96rem] font-medium text-[#5D5D54] hover:bg-[#ECEAE5] hover:text-[#1C1C16] data-[state=open]:bg-[#ECEAE5] data-[state=open]:text-[#1C1C16] dark:text-[#C9D4CF] dark:hover:bg-white/10 dark:hover:text-white dark:data-[state=open]:bg-white/12 dark:data-[state=open]:text-white",
+                      isRTL ? "arabic-text" : "uppercase tracking-[0.04em]"
+                    )}
+                  >
+                    {item.label[language]}
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent
+                    id={`main-nav-content-${item.key}`}
+                    onMouseEnter={clearCloseTimeout}
+                    onMouseLeave={scheduleClose}
+                    className="md:!fixed md:!left-1/2 md:!right-auto md:!mt-0 md:!w-[min(1120px,calc(100vw-2rem))] md:!max-w-none md:!-translate-x-1/2 !overflow-visible !rounded-2xl !border !border-black/10 bg-[#F8F8F6] !p-0 shadow-[0_22px_40px_rgba(12,12,11,0.08)] dark:!border-[#D9FFF4]/40 dark:bg-[#0F1716] dark:shadow-[0_22px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(217,255,244,0.24)]"
+                    style={{ top: `${headerHeight}px` }}
+                  >
+                    <div className="w-full">
+                      <MegaMenuContent
+                        columns={localizedColumns}
+                        preview={{
+                          title: item.preview.title[language],
+                          href: resolveNavHref(item.preview.href),
+                          imageSrc: item.preview.imageSrc,
+                          badge: item.preview.badge?.[language],
+                        }}
+                        isRTL={isRTL}
+                        onItemSelect={() => closeDesktopMenu(false)}
+                      />
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              );
+            })}
           </NavigationMenuList>
         </NavigationMenu>
 
@@ -649,4 +676,3 @@ export default function Navbar({ language, onToggleLanguage }: NavbarProps) {
     </header>
   );
 }
-

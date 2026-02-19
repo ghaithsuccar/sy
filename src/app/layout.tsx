@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cairo, Plus_Jakarta_Sans, Inter } from "next/font/google";
+import PageTransition from "@/components/layout/PageTransition";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import "./globals.css";
 
@@ -56,7 +57,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${jakarta.variable} ${inter.variable} ${cairo.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          {children}
+          <PageTransition>{children}</PageTransition>
         </ThemeProvider>
       </body>
     </html>
