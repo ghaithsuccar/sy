@@ -1,10 +1,15 @@
 "use client";
 
-import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
 import { ArrowRight, Check, Gauge, Sparkles, Target, Workflow, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
-import type { MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 
 import AboutOrbScene from "@/components/sections/about/AboutOrbScene";
 import { Badge } from "@/components/ui/badge";
@@ -50,6 +55,23 @@ type ProofItem = {
   value: string;
   label: { en: string; ar: string };
   body: { en: string; ar: string };
+};
+
+type ComparisonColumnKey = "speed" | "flexibility" | "quality" | "scalability" | "cost";
+
+type ComparisonScore = "yes" | "mixed" | "no";
+
+type ComparisonColumn = {
+  key: ComparisonColumnKey;
+  label: { en: string; ar: string };
+};
+
+type ComparisonRow = {
+  key: string;
+  name: { en: string; ar: string };
+  body: { en: string; ar: string };
+  scores: Record<ComparisonColumnKey, ComparisonScore>;
+  highlight?: boolean;
 };
 
 const highlights: Highlight[] = [
@@ -246,33 +268,75 @@ const proofItems: ProofItem[] = [
   },
 ];
 
-const fitGood = [
-  {
-    en: "Businesses investing in systems, not short-term hacks.",
-    ar: "شركات تستثمر في الأنظمة وليس الحلول المؤقتة.",
-  },
-  {
-    en: "Teams that value speed with operational discipline.",
-    ar: "فرق تقدر السرعة مع الانضباط التشغيلي.",
-  },
-  {
-    en: "Brands entering new markets or channels with intent.",
-    ar: "علامات تتوسع إلى أسواق أو قنوات جديدة بوضوح هدف.",
-  },
+const comparisonColumns: ComparisonColumn[] = [
+  { key: "speed", label: { en: "Speed", ar: "السرعة" } },
+  { key: "flexibility", label: { en: "Flexibility", ar: "المرونة" } },
+  { key: "quality", label: { en: "Quality", ar: "الجودة" } },
+  { key: "scalability", label: { en: "Scalability", ar: "القابلية للتوسع" } },
+  { key: "cost", label: { en: "Cost Efficiency", ar: "كفاءة التكلفة" } },
 ];
 
-const fitBad = [
+const comparisonRows: ComparisonRow[] = [
   {
-    en: "Projects expecting instant outcomes with no process change.",
-    ar: "مشاريع تتوقع نتائج فورية دون تغيير في طريقة العمل.",
+    key: "masar",
+    name: { en: "MASAR", ar: "مسار" },
+    body: {
+      en: "Unified strategy, execution, and automation under one accountable team.",
+      ar: "استراتيجية وتنفيذ وأتمتة موحدة ضمن فريق واحد بمسؤولية واضحة.",
+    },
+    scores: {
+      speed: "yes",
+      flexibility: "yes",
+      quality: "yes",
+      scalability: "yes",
+      cost: "yes",
+    },
+    highlight: true,
   },
   {
-    en: "Engagements with unclear ownership from the client side.",
-    ar: "تعاونات بلا جهة مسؤولة واضحة من طرف العميل.",
+    key: "agencies",
+    name: { en: "Traditional Agencies", ar: "الوكالات التقليدية" },
+    body: {
+      en: "Useful for campaigns, but slower handoffs and fragmented operations are common.",
+      ar: "مفيدة للحملات، لكن بطء التسليم وتشتت التشغيل يظهران غالبا.",
+    },
+    scores: {
+      speed: "mixed",
+      flexibility: "mixed",
+      quality: "yes",
+      scalability: "mixed",
+      cost: "no",
+    },
   },
   {
-    en: "Brands focused on volume only, not quality or trust.",
-    ar: "علامات تركز على الكمية فقط دون الجودة أو الثقة.",
+    key: "freelancers",
+    name: { en: "Freelancers", ar: "المستقلون" },
+    body: {
+      en: "Fast for isolated tasks, but limited ownership across full-funnel growth.",
+      ar: "سريعون في المهام الفردية، لكن الملكية محدودة عبر مسار النمو الكامل.",
+    },
+    scores: {
+      speed: "yes",
+      flexibility: "yes",
+      quality: "mixed",
+      scalability: "no",
+      cost: "mixed",
+    },
+  },
+  {
+    key: "diy",
+    name: { en: "Business Owner DIY", ar: "إدارة ذاتية من صاحب العمل" },
+    body: {
+      en: "Maximum control, but time cost and execution consistency become major bottlenecks.",
+      ar: "تحكم كامل، لكن تكلفة الوقت وثبات التنفيذ يتحولان لعائق رئيسي.",
+    },
+    scores: {
+      speed: "no",
+      flexibility: "mixed",
+      quality: "mixed",
+      scalability: "no",
+      cost: "no",
+    },
   },
 ];
 
@@ -288,8 +352,32 @@ function toPercent(event: ReactMouseEvent<HTMLElement>) {
   };
 }
 
+function getScrollParent(element: HTMLElement | null): HTMLElement | Window {
+  let node = element?.parentElement ?? null;
+
+  while (node) {
+    const style = window.getComputedStyle(node);
+    const overflowY = style.overflowY;
+    const isScrollableY = overflowY === "auto" || overflowY === "scroll" || overflowY === "overlay";
+
+    if (isScrollableY && node.scrollHeight > node.clientHeight + 1) {
+      return node;
+    }
+
+    node = node.parentElement;
+  }
+
+  return window;
+}
+
 export default function AboutPageContent({ language }: { language: Language }) {
   const isRTL = language === "ar";
+  const missionListRef = useRef<HTMLOListElement | null>(null);
+  const missionMarkerRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const missionBaseRailRef = useRef<HTMLDivElement | null>(null);
+  const missionFillRailRef = useRef<HTMLDivElement | null>(null);
+  const missionActiveIndexRef = useRef(0);
+  const [missionActiveIndex, setMissionActiveIndex] = useState(0);
 
   const stageXRaw = useMotionValue(50);
   const stageYRaw = useMotionValue(50);
@@ -302,6 +390,96 @@ export default function AboutPageContent({ language }: { language: Language }) {
   const ctaX = useSpring(ctaXRaw, { stiffness: 200, damping: 24, mass: 0.44 });
   const ctaY = useSpring(ctaYRaw, { stiffness: 200, damping: 24, mass: 0.44 });
   const ctaGlow = useMotionTemplate`radial-gradient(420px circle at ${ctaX}% ${ctaY}%, rgba(230,216,184,0.3), transparent 72%)`;
+
+  useEffect(() => {
+    const list = missionListRef.current;
+    const baseRail = missionBaseRailRef.current;
+    const fillRail = missionFillRailRef.current;
+    if (!list || !baseRail || !fillRail) {
+      return;
+    }
+
+    let frameId = 0;
+    let running = true;
+    const geom = { top: -1, height: -1, progress: -1 };
+    const scrollParent = getScrollParent(list);
+
+    const tick = () => {
+      if (!running) {
+        return;
+      }
+
+      const list = missionListRef.current;
+      const baseRail = missionBaseRailRef.current;
+      const fillRail = missionFillRailRef.current;
+      const markers = missionMarkerRefs.current.filter((marker): marker is HTMLSpanElement => Boolean(marker));
+
+      if (list && baseRail && fillRail && markers.length > 1) {
+        const listRect = list.getBoundingClientRect();
+        const firstRect = markers[0].getBoundingClientRect();
+        const lastRect = markers[markers.length - 1].getBoundingClientRect();
+
+        const firstCenterRel = firstRect.top - listRect.top + firstRect.height / 2;
+        const lastCenterRel = lastRect.top - listRect.top + lastRect.height / 2;
+        const railTop = Math.max(0, firstCenterRel);
+        const railHeight = Math.max(1, lastCenterRel - firstCenterRel);
+
+        const parentRect =
+          scrollParent instanceof Window
+            ? { top: 0, height: window.innerHeight }
+            : scrollParent.getBoundingClientRect();
+
+        const probeViewportY = parentRect.top + parentRect.height * 0.46;
+        const firstCenterViewport = firstRect.top + firstRect.height / 2;
+        const lastCenterViewport = lastRect.top + lastRect.height / 2;
+        const range = Math.max(1, lastCenterViewport - firstCenterViewport);
+        const nextProgress = (probeViewportY - firstCenterViewport) / range;
+        const clampedProgress = Math.max(0, Math.min(1, nextProgress));
+
+        if (Math.abs(geom.top - railTop) > 0.5) {
+          geom.top = railTop;
+          baseRail.style.top = `${railTop}px`;
+          fillRail.style.top = `${railTop}px`;
+        }
+
+        if (Math.abs(geom.height - railHeight) > 0.5) {
+          geom.height = railHeight;
+          baseRail.style.height = `${railHeight}px`;
+          fillRail.style.height = `${railHeight}px`;
+        }
+
+        if (Math.abs(geom.progress - clampedProgress) > 0.0006) {
+          geom.progress = clampedProgress;
+          fillRail.style.transform = `scaleY(${clampedProgress})`;
+        }
+
+        const markerCount = markers.length;
+        const nextActiveIndex =
+          markerCount === 1
+            ? 0
+            : Math.max(
+                0,
+                Math.min(markerCount - 1, Math.floor((clampedProgress + 0.03) * (markerCount - 1)))
+              );
+
+        if (nextActiveIndex !== missionActiveIndexRef.current) {
+          missionActiveIndexRef.current = nextActiveIndex;
+          setMissionActiveIndex(nextActiveIndex);
+        }
+      }
+
+      frameId = window.requestAnimationFrame(tick);
+    };
+
+    frameId = window.requestAnimationFrame(tick);
+
+    return () => {
+      running = false;
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, []);
 
   const copy = {
     whoEyebrow: { en: "Who We Are", ar: "من نحن" },
@@ -323,6 +501,11 @@ export default function AboutPageContent({ language }: { language: Language }) {
       en: "We make growth clearer, measurable, and more sustainable for ambitious teams.",
       ar: "نجعل النمو أوضح وأكثر قابلية للقياس والاستدامة للفرق الطموحة.",
     },
+    missionBody: {
+      en: "We build practical systems that align strategy, operations, and execution so your team can move faster with less friction.",
+      ar: "نبني أنظمة عملية توحد الاستراتيجية والتشغيل والتنفيذ حتى يعمل فريقك بسرعة أكبر واحتكاك أقل.",
+    },
+    missionCta: { en: "Book a Strategy Call", ar: "احجز استشارة استراتيجية" },
     processEyebrow: { en: "How We Work", ar: "كيف نعمل" },
     processHeading: {
       en: "A disciplined process from diagnosis to optimization.",
@@ -338,10 +521,19 @@ export default function AboutPageContent({ language }: { language: Language }) {
       en: "The metrics that matter in real business growth.",
       ar: "المؤشرات التي تهم في نمو الأعمال الحقيقي.",
     },
-    fitEyebrow: { en: "Best Fit", ar: "الملاءمة" },
-    fitHeading: { en: "Who we work best with.", ar: "مع من نعمل بأفضل شكل." },
-    fitGoodTitle: { en: "Best Fit For", ar: "الأكثر ملاءمة لـ" },
-    fitBadTitle: { en: "Not Ideal For", ar: "غير مناسب عادة لـ" },
+    compareEyebrow: { en: "Why Choose Us", ar: "لماذا نحن" },
+    compareHeading: {
+      en: "Compare your options before you commit.",
+      ar: "قارن الخيارات بوضوح قبل اتخاذ القرار.",
+    },
+    compareBody: {
+      en: "A side-by-side view of MASAR, traditional agencies, freelancers, and doing it in-house.",
+      ar: "مقارنة مباشرة بين مسار والوكالات التقليدية والمستقلين والإدارة الذاتية داخليا.",
+    },
+    compareOption: { en: "Option", ar: "الخيار" },
+    compareYes: { en: "Strong", ar: "قوي" },
+    compareMixed: { en: "Partial", ar: "جزئي" },
+    compareNo: { en: "Limited", ar: "محدود" },
     ctaEyebrow: { en: "Start Here", ar: "ابدأ من هنا" },
     ctaHeading: {
       en: "Build your next growth system with MASAR.",
@@ -515,8 +707,8 @@ export default function AboutPageContent({ language }: { language: Language }) {
       <section className="relative overflow-hidden bg-[#F6F7F7] px-6 py-24 dark:bg-[#0A1110]">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-[linear-gradient(180deg,rgba(78,209,178,0.13),rgba(78,209,178,0))]" />
 
-        <div className="relative mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className={cn("space-y-5", isRTL && "text-right")}>
+        <div className={cn("relative mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-start", isRTL && "lg:[direction:rtl]")}>
+          <div className={cn("space-y-7", isRTL && "text-right")}>
             <Badge
               variant="brand-outline"
               className={cn(
@@ -534,28 +726,81 @@ export default function AboutPageContent({ language }: { language: Language }) {
             >
               {copy.missionHeading[language]}
             </h2>
+
+            <p className={cn("max-w-[64ch] text-base leading-8 text-[#4A5754] dark:text-[#A9B9B4]", isRTL && "arabic-text")}>
+              {copy.missionBody[language]}
+            </p>
+
+            <div className={cn("pt-1", isRTL && "flex justify-end")}>
+              <Button asChild variant="brand" className="group h-12 min-w-[220px] justify-center gap-2.5">
+                <Link href={`/${language}#contact`}>
+                  <span>{copy.missionCta[language]}</span>
+                  <ArrowRight className={cn("size-4 transition-transform duration-200 group-hover:translate-x-0.5", isRTL && "rotate-180")} />
+                </Link>
+              </Button>
+            </div>
           </div>
 
-          <ol className="divide-y divide-[#0F1F1E]/10 border-y border-[#0F1F1E]/10 dark:divide-white/15 dark:border-white/15">
-            {values.map((value, index) => (
-              <li key={value.key} className={cn("py-5", isRTL && "text-right")}>
-                <p className={cn("text-xs font-semibold text-[#5A6B66] dark:text-[#9FB1AB]", !isRTL && "tracking-[0.14em]")}>
-                  {String(index + 1).padStart(2, "0")}
-                </p>
-                <h3
-                  className={cn(
-                    "mt-2 text-xl font-semibold leading-tight text-[#0F1F1E] dark:text-[#EAF2EE]",
-                    isRTL ? "arabic-text" : "font-brand-display"
-                  )}
-                >
-                  {value.title[language]}
-                </h3>
-                <p className={cn("mt-2 text-sm leading-7 text-[#4A5754] dark:text-[#A9B9B4]", isRTL && "arabic-text")}>
-                  {value.body[language]}
-                </p>
-              </li>
-            ))}
-          </ol>
+          <div className="relative">
+            <div
+              ref={missionBaseRailRef}
+              className={cn(
+                "pointer-events-none absolute z-10 w-[2px] bg-[#0F1F1E]/14 dark:bg-white/18",
+                isRTL ? "right-[13px]" : "left-[13px]"
+              )}
+              style={{ top: 0, height: 0 }}
+            />
+            <div
+              ref={missionFillRailRef}
+              className={cn(
+                "pointer-events-none absolute z-10 w-[2px] origin-top bg-[#4ED1B2] shadow-[0_0_12px_rgba(78,209,178,0.55)] will-change-transform",
+                isRTL ? "right-[13px]" : "left-[13px]"
+              )}
+              style={{ top: 0, height: 0, transform: "scaleY(0)" }}
+            />
+
+            <ol ref={missionListRef} className="space-y-10 sm:space-y-12">
+              {values.map((value, index) => {
+                const isAccent = index <= missionActiveIndex;
+                return (
+                  <li
+                    key={value.key}
+                    className={cn(
+                      "relative pl-16",
+                      isRTL ? "pr-16 pl-0 text-right" : "text-left"
+                    )}
+                  >
+                    <span
+                      ref={(element) => {
+                        missionMarkerRefs.current[index] = element;
+                      }}
+                      className={cn(
+                        "absolute top-1 z-30 inline-flex size-7 items-center justify-center rounded-full border-2 bg-[#F6F7F7] text-[10px] font-semibold shadow-[0_0_0_6px_#F6F7F7] dark:bg-[#0A1110] dark:shadow-[0_0_0_6px_#0A1110]",
+                        isRTL ? "right-0" : "left-0",
+                        isAccent
+                          ? "border-[#4ED1B2] text-[#1E8C73] dark:text-[#7EF0DB]"
+                          : "border-[#0F1F1E]/16 text-[#70807B] dark:border-white/24 dark:text-[#97AAA4]"
+                      )}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    <h3
+                      className={cn(
+                        "text-[2rem] font-semibold leading-tight tracking-tight text-[#0F1F1E] dark:text-[#EAF2EE] sm:text-[2.25rem]",
+                        isRTL ? "arabic-text leading-[1.25]" : "font-brand-display"
+                      )}
+                    >
+                      {value.title[language]}
+                    </h3>
+                    <p className={cn("mt-2 max-w-[56ch] text-base leading-8 text-[#4A5754] dark:text-[#A9B9B4]", isRTL && "arabic-text")}>
+                      {value.body[language]}
+                    </p>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
         </div>
       </section>
 
@@ -735,7 +980,7 @@ export default function AboutPageContent({ language }: { language: Language }) {
                 isRTL ? "mr-0 ml-auto arabic-text tracking-normal" : "tracking-[0.18em]"
               )}
             >
-              {copy.fitEyebrow[language]}
+              {copy.compareEyebrow[language]}
             </Badge>
             <h2
               className={cn(
@@ -743,56 +988,119 @@ export default function AboutPageContent({ language }: { language: Language }) {
                 isRTL ? "arabic-text leading-[1.3]" : "font-brand-display"
               )}
             >
-              {copy.fitHeading[language]}
+              {copy.compareHeading[language]}
             </h2>
+            <p className={cn("max-w-[68ch] text-base leading-8 text-[#4A5754] dark:text-[#A9B9B4]", isRTL && "arabic-text")}>
+              {copy.compareBody[language]}
+            </p>
           </header>
 
           <div className="relative mt-12 overflow-hidden rounded-[34px] border border-[#0F1F1E]/10 dark:border-white/15">
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(125deg,rgba(78,209,178,0.16),rgba(78,209,178,0)_48%,rgba(230,216,184,0.18))] dark:bg-[linear-gradient(125deg,rgba(78,209,178,0.1),rgba(78,209,178,0)_48%,rgba(230,216,184,0.1))]" />
-            <div className={cn("relative grid gap-0 md:grid-cols-2", isRTL && "md:[direction:rtl]")}>
-              <div className="px-6 py-8 sm:px-8 sm:py-10">
-                <h3
-                  className={cn(
-                    "text-2xl font-semibold leading-tight text-[#0F1F1E] dark:text-[#EAF2EE]",
-                    isRTL ? "arabic-text leading-[1.3] text-right" : "font-brand-display"
-                  )}
-                >
-                  {copy.fitGoodTitle[language]}
-                </h3>
-                <ul className="mt-4 space-y-2.5">
-                  {fitGood.map((item) => (
-                    <li
-                      key={item.en}
-                      className={cn("flex items-start gap-2 text-sm leading-7 text-[#4A5754] dark:text-[#A9B9B4]", isRTL && "flex-row-reverse text-right arabic-text")}
+            <div className="relative overflow-x-auto">
+              <table className={cn("w-full min-w-[960px] border-separate border-spacing-0", isRTL && "[direction:rtl]")}>
+                <thead>
+                  <tr className="bg-[#0F1F1E]/4 dark:bg-white/[0.05]">
+                    <th
+                      className={cn(
+                        "w-[36%] min-w-[320px] px-6 py-5 text-sm font-semibold text-[#1C312E] dark:text-[#DCE9E4]",
+                        isRTL ? "text-right arabic-text" : "text-left tracking-[0.08em]"
+                      )}
                     >
-                      <Check className="mt-1 size-4 shrink-0 text-[#1E8C73] dark:text-[#7EF0DB]" />
-                      <span>{item[language]}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                      {copy.compareOption[language]}
+                    </th>
+                    {comparisonColumns.map((column) => (
+                      <th
+                        key={column.key}
+                        className={cn(
+                          "px-5 py-5 text-center text-sm font-semibold text-[#1C312E] dark:text-[#DCE9E4]",
+                          isRTL ? "arabic-text" : "tracking-[0.08em]"
+                        )}
+                      >
+                        {column.label[language]}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
 
-              <div className="border-t border-[#0F1F1E]/10 px-6 py-8 sm:px-8 sm:py-10 dark:border-white/15 md:border-l md:border-t-0">
-                <h3
-                  className={cn(
-                    "text-2xl font-semibold leading-tight text-[#0F1F1E] dark:text-[#EAF2EE]",
-                    isRTL ? "arabic-text leading-[1.3] text-right" : "font-brand-display"
-                  )}
-                >
-                  {copy.fitBadTitle[language]}
-                </h3>
-                <ul className="mt-4 space-y-2.5">
-                  {fitBad.map((item) => (
-                    <li
-                      key={item.en}
-                      className={cn("flex items-start gap-2 text-sm leading-7 text-[#4A5754] dark:text-[#A9B9B4]", isRTL && "flex-row-reverse text-right arabic-text")}
+                <tbody>
+                  {comparisonRows.map((row, rowIndex) => (
+                    <tr
+                      key={row.key}
+                      className={cn(
+                        row.highlight && "bg-[#4ED1B2]/10 dark:bg-[#4ED1B2]/14"
+                      )}
                     >
-                      <X className="mt-1 size-4 shrink-0 text-[#BF3E3E] dark:text-[#F19A9A]" />
-                      <span>{item[language]}</span>
-                    </li>
+                      <th
+                        className={cn(
+                          "px-6 py-6 align-top",
+                          rowIndex !== 0 && "border-t border-[#0F1F1E]/10 dark:border-white/14"
+                        )}
+                      >
+                        <div className={cn("space-y-2", isRTL ? "text-right" : "text-left")}>
+                          <p
+                            className={cn(
+                              "text-2xl font-semibold leading-tight text-[#0F1F1E] dark:text-[#EAF2EE]",
+                              isRTL ? "arabic-text leading-[1.3]" : "font-brand-display"
+                            )}
+                          >
+                            {row.name[language]}
+                          </p>
+                          <p className={cn("max-w-[42ch] text-sm leading-7 text-[#4A5754] dark:text-[#A9B9B4]", isRTL && "arabic-text")}>
+                            {row.body[language]}
+                          </p>
+                        </div>
+                      </th>
+
+                      {comparisonColumns.map((column) => {
+                        const score = row.scores[column.key];
+                        const isYes = score === "yes";
+                        const isMixed = score === "mixed";
+
+                        return (
+                          <td
+                            key={`${row.key}-${column.key}`}
+                            className={cn(
+                              "px-5 py-6 text-center align-middle",
+                              rowIndex !== 0 && "border-t border-[#0F1F1E]/10 dark:border-white/14"
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                "mx-auto inline-flex size-9 items-center justify-center rounded-full border",
+                                isYes && "border-[#4ED1B2]/80 bg-[#4ED1B2]/16 text-[#1E8C73] dark:text-[#85F2DE]",
+                                isMixed && "border-[#E6D8B8]/80 bg-[#E6D8B8]/22 text-[#5E5035] dark:text-[#EADCBF]",
+                                !isYes && !isMixed && "border-[#D97C7C]/65 bg-[#D97C7C]/14 text-[#A33B3B] dark:text-[#F0A2A2]"
+                              )}
+                            >
+                              {isYes ? (
+                                <Check className="size-4" />
+                              ) : isMixed ? (
+                                <span className="text-sm font-semibold leading-none">~</span>
+                              ) : (
+                                <X className="size-4" />
+                              )}
+                            </span>
+
+                            <span
+                              className={cn(
+                                "mt-1.5 block text-[11px] font-medium text-[#5D6D68] dark:text-[#94A9A2]",
+                                isRTL && "arabic-text"
+                              )}
+                            >
+                              {isYes
+                                ? copy.compareYes[language]
+                                : isMixed
+                                ? copy.compareMixed[language]
+                                : copy.compareNo[language]}
+                            </span>
+                          </td>
+                        );
+                      })}
+                    </tr>
                   ))}
-                </ul>
-              </div>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
